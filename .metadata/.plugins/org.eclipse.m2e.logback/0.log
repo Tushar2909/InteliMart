@@ -1,0 +1,362 @@
+2025-11-23 16:13:20,145 [Worker-6: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is not available. Remote download required.
+2025-11-23 16:18:33,324 [Worker-9: Importing Maven projects] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.cdac:springboot_backend_template:0.0.1 @ E:\InteliMart\springboot_backend_template\pom.xml.
+2025-11-23 16:18:37,964 [Worker-9: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /springboot_backend_template/src/main/java
+2025-11-23 16:18:37,968 [Worker-9: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/main/resources
+2025-11-23 16:18:37,971 [Worker-9: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/main/resources
+2025-11-23 16:18:37,972 [Worker-9: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /springboot_backend_template/src/test/java
+2025-11-23 16:18:37,973 [Worker-9: Importing Maven projects] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/test/resources
+2025-11-23 16:18:38,265 [Worker-9: Importing Maven projects] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Imported and configured 1 project(s) in 9 sec
+2025-11-23 16:18:39,016 [Worker-10: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update started
+2025-11-23 16:18:39,363 [Worker-10: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.cdac:springboot_backend_template:0.0.1 @ E:\InteliMart\springboot_backend_template\pom.xml.
+2025-11-23 16:18:41,400 [Worker-10: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /springboot_backend_template/src/main/java
+2025-11-23 16:18:41,401 [Worker-10: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/main/resources
+2025-11-23 16:18:41,401 [Worker-10: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/main/resources
+2025-11-23 16:18:41,402 [Worker-10: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /springboot_backend_template/src/test/java
+2025-11-23 16:18:41,402 [Worker-10: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /springboot_backend_template/src/test/resources
+2025-11-23 16:18:41,608 [Worker-10: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update completed for 1 poms: local refresh takes 0.00 sec, refresh facades takes 2.00 sec, update config takes 0.00 sec 
+2025-11-23 16:18:41,967 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:18:41,988 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:18:41,992 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\springboot_backend_template\src\test\resources
+2025-11-23 16:19:08,993 [main] INFO  o.e.m2e.actions.ExecutePomAction - Creating new launch configuration
+2025-11-23 16:19:15,081 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013 [361])
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\aopalliance-1.0.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\guice-5.1.0.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\httpclient-4.5.14.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\httpcore-4.4.16.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\jansi-2.4.1.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\jcl-over-slf4j-1.7.36.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-artifact-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-builder-support-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-compat-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-core-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-embedder-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-model-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-model-builder-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-plugin-api-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-repository-metadata-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-api-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-connector-basic-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-impl-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-named-locks-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-provider-3.9.9.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-spi-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-transport-file-1.9.22.jar
+2025-11-23 16:19:15,083 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-transport-http-1.9.22.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-transport-wagon-1.9.22.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-resolver-util-1.9.22.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-settings-3.9.9.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-settings-builder-3.9.9.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\maven-shared-utils-3.4.2.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\org.eclipse.sisu.inject-0.9.0.M3.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\org.eclipse.sisu.plexus-0.9.0.M3.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-build-api-0.0.7.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-build-api-1.2.0.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-cipher-2.0.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-classworlds-2.8.0.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-component-annotations-2.1.0.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-interpolation-1.27.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-sec-dispatcher-2.0.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-utils-3.5.1.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\plexus-xml-3.0.1.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\wagon-file-3.5.3.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\wagon-http-3.5.3.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\wagon-http-shared-3.5.3.jar
+2025-11-23 16:19:15,084 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.eclipse.m2e.maven.runtime_3.9.900.20250220-2013\jars\wagon-provider-api-3.5.3.jar
+2025-11-23 16:19:15,085 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=com.google.guava_33.4.0.jre [29])
+2025-11-23 16:19:15,085 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\com.google.guava_33.4.0.jre.jar
+2025-11-23 16:19:15,085 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=slf4j.api_2.0.17 [608])
+2025-11-23 16:19:15,086 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\slf4j.api_2.0.17.jar
+2025-11-23 16:19:15,086 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=javax.inject_1.0.0.v20220405-0441 [759])
+2025-11-23 16:19:15,086 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\javax.inject_1.0.0.v20220405-0441.jar
+2025-11-23 16:19:15,087 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=javax.annotation_1.3.5.v20230504-0748 [758])
+2025-11-23 16:19:15,087 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\javax.annotation_1.3.5.v20230504-0748.jar
+2025-11-23 16:19:15,087 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=org.apache.commons.cli_1.9.0 [77])
+2025-11-23 16:19:15,087 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.apache.commons.cli_1.9.0.jar
+2025-11-23 16:19:15,087 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=org.apache.commons.commons-codec_1.16.0 [79])
+2025-11-23 16:19:15,088 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\org.apache.commons.commons-codec_1.16.0.jar
+2025-11-23 16:19:15,088 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - getClasspathEntries(Bundle=com.google.guava.failureaccess_1.0.2 [30])
+2025-11-23 16:19:15,088 [Worker-10: Launching springboot_backend_template] INFO  o.eclipse.m2e.core.internal.Bundles - 	Entry: E:\ADV JAVA\sts-4.30.0.RELEASE\plugins\com.google.guava.failureaccess_1.0.2.jar
+2025-11-23 16:19:15,090 [Worker-10: Launching springboot_backend_template] INFO  o.e.m.i.launch.MavenLaunchDelegate - Run build in "E:\InteliMart\springboot_backend_template":
+2025-11-23 16:19:15,091 [Worker-10: Launching springboot_backend_template] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn  -B -Dstyle.color=always clean compile
+2025-11-23 16:20:50,522 [Worker-2: Building] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.cdac:springboot_backend_template:0.0.1 @ E:\InteliMart\IntelliMart\pom.xml.
+2025-11-23 16:20:51,225 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:20:51,246 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:20:51,250 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:20:52,450 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:20:52,451 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:20:52,454 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:21:39,344 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:21:39,348 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:21:39,351 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:21:53,853 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:21:53,857 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:21:53,859 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:22:09,580 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:22:09,583 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:22:09,586 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:22:21,515 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:22:21,524 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:22:21,526 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:22:51,089 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:22:51,092 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:22:51,094 [Worker-4: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:25:28,679 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:25:28,685 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:25:28,687 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:26:13,577 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:26:13,580 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:26:13,582 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:27:21,522 [Worker-1: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:27:21,528 [Worker-1: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:27:21,530 [Worker-1: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:28:57,491 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:28:57,498 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:28:57,500 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:31:08,637 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:31:08,643 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:31:08,645 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:31:21,387 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:31:21,392 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:31:21,394 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:31:35,372 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:31:35,375 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:31:35,378 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:34:08,100 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:34:08,103 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:34:08,105 [Worker-14: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:34:29,533 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:34:29,537 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:34:29,539 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:36:03,763 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:36:03,768 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:36:03,770 [Worker-13: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:37:11,686 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:37:11,692 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:37:11,694 [Worker-10: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:39:22,634 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:39:22,640 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:39:22,642 [Worker-15: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 16:43:01,696 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 16:43:01,701 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 16:43:01,703 [Worker-12: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:33:36,599 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:33:36,609 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:33:36,610 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:37:02,934 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:37:02,945 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:37:02,947 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:37:35,275 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:37:35,280 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:37:35,282 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:37:47,788 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:37:47,793 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:37:47,795 [Worker-3: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:38:05,185 [Worker-21: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:38:05,189 [Worker-21: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:38:05,191 [Worker-21: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:38:47,789 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:38:47,792 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:38:47,794 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:39:36,951 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:39:36,960 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:39:36,962 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:46:49,097 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:46:49,115 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:46:49,117 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:53:10,633 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:53:10,638 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:53:10,640 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:53:34,207 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:53:34,216 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:53:34,217 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:54:39,821 [Worker-27: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:54:39,825 [Worker-27: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:54:39,827 [Worker-27: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:55:43,649 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:55:43,654 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:55:43,656 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:57:28,177 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:57:28,182 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:57:28,184 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:57:30,491 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:57:30,497 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:57:30,499 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 17:58:26,835 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 17:58:26,838 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 17:58:26,840 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:00:04,413 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:00:04,418 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:00:04,419 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:02:42,577 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:02:42,583 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:02:42,585 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:05:23,395 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:05:23,399 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:05:23,400 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:07:34,780 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:07:34,783 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:07:34,785 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:13:46,307 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:13:46,315 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:13:46,317 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:14:19,072 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:14:19,078 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:14:19,080 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:14:38,044 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:14:38,050 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:14:38,052 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:14:40,812 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:14:40,815 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:14:40,816 [Worker-28: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:14:56,541 [Worker-17: Launching springboot_backend_template - Application] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:14:56,550 [Worker-17: Launching springboot_backend_template - Application] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:14:56,552 [Worker-17: Launching springboot_backend_template - Application] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:16:25,463 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:16:25,468 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:16:25,469 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:19:35,351 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:19:35,356 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:19:35,358 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:20:04,701 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:20:04,707 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:20:04,709 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:20:11,496 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:20:11,503 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:20:11,505 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:20:16,411 [Worker-29: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:20:16,416 [Worker-29: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:20:16,418 [Worker-29: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:20:23,428 [Worker-30: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:20:23,431 [Worker-30: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:20:23,432 [Worker-30: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:22:05,441 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:22:05,444 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:22:05,445 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:22:42,608 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:22:42,612 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:22:42,614 [Worker-31: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:23:02,230 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:23:02,234 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:23:02,235 [Worker-23: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:31:38,959 [Worker-2: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-11-23 18:49:45,768 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:49:45,782 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:49:45,786 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:49:47,113 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:49:47,116 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:49:47,118 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:50:05,024 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:50:05,029 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:50:05,031 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:51:01,618 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:51:01,621 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:51:01,624 [Worker-16: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:51:50,226 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:51:50,230 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:51:50,233 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:52:39,660 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:52:39,664 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:52:39,667 [Worker-17: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:53:51,165 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:53:51,173 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:53:51,181 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 18:56:57,657 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 18:56:57,661 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 18:56:57,663 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 19:00:51,467 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 19:00:51,473 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 19:00:51,475 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 19:01:34,589 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 19:01:34,593 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 19:01:34,595 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 19:02:09,346 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 19:02:09,351 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 19:02:09,353 [Worker-19: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 19:02:23,286 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 19:02:23,289 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 19:02:23,291 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:32:13,433 [Worker-4: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-11-23 21:35:12,552 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:35:12,567 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:35:12,571 [Worker-2: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:35:44,353 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:35:44,358 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:35:44,362 [Worker-9: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:40:09,079 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:40:09,083 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:40:09,086 [Worker-18: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:43:47,553 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:43:47,560 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:43:47,562 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:46:05,560 [Worker-6: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:46:05,563 [Worker-6: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:46:05,565 [Worker-6: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:46:43,278 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:46:43,281 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:46:43,284 [Worker-20: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:55:20,115 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:55:20,119 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:55:20,122 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:55:37,330 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:55:37,338 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:55:37,340 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:56:10,473 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:56:10,476 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:56:10,479 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:56:26,721 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:56:26,725 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:56:26,727 [Worker-26: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:56:36,138 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:56:36,141 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:56:36,143 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 21:57:42,674 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 21:57:42,682 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 21:57:42,685 [Worker-24: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:01:39,997 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:01:40,002 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:01:40,004 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:04:45,572 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:04:45,576 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:04:45,578 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:11:34,596 [Worker-33: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:11:34,602 [Worker-33: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:11:34,604 [Worker-33: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:15:39,567 [Worker-39: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:15:39,571 [Worker-39: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:15:39,573 [Worker-39: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:21:17,618 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:21:17,623 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:21:17,625 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:21:40,725 [Worker-41: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:21:40,731 [Worker-41: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:21:40,733 [Worker-41: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:23:19,059 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:23:19,065 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:23:19,067 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:23:21,780 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:23:21,783 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:23:21,785 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:23:23,790 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:23:23,793 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:23:23,795 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:23:42,473 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:23:42,476 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:23:42,478 [Worker-42: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:25:48,318 [Worker-37: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:25:48,322 [Worker-37: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:25:48,324 [Worker-37: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:26:52,425 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:26:52,429 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:26:52,431 [Worker-40: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:30:45,007 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:30:45,014 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:30:45,016 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-23 22:30:51,533 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-23 22:30:51,539 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-23 22:30:51,540 [Worker-44: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources
+2025-11-25 12:32:07,271 [Worker-4: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2025-11-25 16:33:06,945 [Worker-6: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2025-11-25 17:13:15,951 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 1 resource from src\main\resources to target\classes
+2025-11-25 17:13:15,971 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - Copying 0 resource from src\main\resources to target\classes
+2025-11-25 17:13:15,975 [Worker-25: Building] INFO  o.a.m.s.f.DefaultMavenResourcesFiltering - skip non existing resourceDirectory E:\InteliMart\IntelliMart\src\test\resources

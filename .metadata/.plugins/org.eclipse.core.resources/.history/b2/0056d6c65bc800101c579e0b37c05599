@@ -1,0 +1,7 @@
+package com.intellimart.entities;
+
+public class Customer {
+	
+	private Long id;
+	
+}

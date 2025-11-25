@@ -1,0 +1,41 @@
+package com.intellimart.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+@Entity
+@Table(name = "users")
+public class User {
+	
+	@Id
+	private Long id;
+
+	@NotNull
+	private String name;
+	
+	//private String address;
+	@NotNull
+	private String number;
+	
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	private Roles role;
+	
+	@NotNull
+	private String email;
+	
+	@NotNull
+	private String password;
+	
+	@NotNull
+	private String gender ;
+	
+	
+	
+	
+
+}

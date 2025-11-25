@@ -1,0 +1,5 @@
+package com.intellimart.entities;
+
+public enum PaymentStatus {
+
+}

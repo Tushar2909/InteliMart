@@ -1,0 +1,22 @@
+package com.intellimart.entities;
+
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+
+public class Payment {
+	
+	private Long pid;
+	
+	private PaymentStatus pstatus;
+	
+	private double amount;
+	
+	private long transactionid;
+	
+	@OneToOne
+	@JoinColumn
+	private Orders orders;
+
+	
+
+}

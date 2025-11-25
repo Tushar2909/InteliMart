@@ -1,0 +1,54 @@
+package com.intellimart.entities;
+
+import java.time.LocalDate;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
+
+@Entity
+@Table(name ="orders")
+public class Orders {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long orderid;
+	
+	@Enumerated(EnumType.STRING)
+	private Status status;
+	
+	
+	private LocalDate orderdate;
+	
+	private double totalamount;
+	
+	private int qunatity;
+	
+	private double perunitprice;
+	
+	
+	@JoinColumn
+		private Customer customer;
+		
+	@JoinColumn
+		private Address addess;
+		
+		
+		
+	
+	
+
+}

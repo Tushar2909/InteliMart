@@ -1,0 +1,22 @@
+package com.intellimart.entities;
+
+public class user {
+	
+	private Long id;
+
+	private String name;
+	
+	private String address;
+	
+	private String number;
+	
+	private Roles role;
+	
+	private String email;
+	
+	private String password;
+	
+	
+	
+
+}
