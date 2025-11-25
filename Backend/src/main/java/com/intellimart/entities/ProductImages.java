@@ -1,0 +1,19 @@
+package com.intellimart.entities;
+
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+public class ProductImages {
+	
+	private Long piId;
+	
+	
+	@ManyToOne
+	@JoinColumn
+private	Product	products ;
+	
+	
+
+
+}
+//delete this ?
