@@ -1,5 +1,6 @@
 package com.intellimart.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ import lombok.ToString;
 
 @Entity
 @Table(name ="orders")
-@ToString(exclude = {"customer","address","Payment"})
+@ToString(exclude = {"customer","address","Payment",""})
 
 public class Orders {
 	
@@ -44,8 +45,9 @@ public class Orders {
 	@Column(nullable  =false)
 	private LocalDate orderdate;
 	
-	@Column(nullable  =false)
-	private double totalamount;
+    @Column(name = "unit_price_at_purchase", precision = 10, scale = 2)
+
+	private BigDecimal totalamount;
 	
 //	@Column(nullable  =false)
 //	private int quantity;
@@ -62,7 +64,7 @@ public class Orders {
 	private Address address;
 	
 	
-@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY) 
+@OneToOne(mappedBy = "orders", cascade = CascadeType.ALL, fetch = FetchType.LAZY) 
 private Payment payments; 
 
 	

@@ -46,9 +46,9 @@ public class Address {
 	@JoinColumn
 	private Customer customer;
 	
-	@ManyToOne
-	@JoinColumn
-	private Seller seller;
-		
+
+	
+	
+
 
 }

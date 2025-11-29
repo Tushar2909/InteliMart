@@ -1,6 +1,6 @@
 package com.intellimart.entities;
 
-import java.util.Set;
+import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -36,17 +35,17 @@ public class Seller {
 	
 	@Column(unique = true)
 	@NotNull
-	private String companyname;
+	private String companyName;
 	
 	@NotNull
-	@Column(nullable = false)
-	private double rating;
+	@Column(precision = 3, scale = 2, nullable = false)
+	private BigDecimal rating;
 	
 	@OneToOne
 	@JoinColumn
 	private User user;
 	
-	@OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	Set<Address>addresses;
-
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "business_address_id", unique = true) // This creates the FK column in the 'sellers' table
+	private Address businessAddress; 
 }

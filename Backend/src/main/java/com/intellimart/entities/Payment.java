@@ -1,5 +1,6 @@
 package com.intellimart.entities;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -10,7 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -39,7 +39,7 @@ public class Payment {
 	private String gateway_payment_id;
 	
 	@Column(nullable = false)
-	private double amount;
+	private BigDecimal amount;
 	
 	@Column(nullable = false)
 	private long transactionid;

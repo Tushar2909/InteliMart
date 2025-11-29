@@ -1,5 +1,8 @@
 package com.intellimart.entities;
 
+import java.math.BigDecimal;
+import java.sql.Blob;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,7 +37,7 @@ public class Product {
 	private ProductCategory  pcategory;
 	
 	@Column(nullable = false)
-	private double price;
+	private BigDecimal price;
 	
 	@Column(nullable = false)
 
@@ -44,6 +46,9 @@ public class Product {
 	@Column(nullable = false)
 
 	private int unitsAvaliable;
+	
+	@Column(nullable = false)
+	private Blob images;
 	
 	
 	@JoinColumn
