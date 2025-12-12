@@ -22,9 +22,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString(exclude = "user")
 
-
-
-
 @Entity
 //@Table(name = "sellers")
 public class Seller {
@@ -46,6 +43,6 @@ public class Seller {
 	private User user;
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "business_address_id", unique = true) // This creates the FK column in the 'sellers' table
+	@JoinColumn(name = "businessAddressId", unique = true) // This creates the FK column in the 'sellers' table
 	private Address businessAddress; 
 }

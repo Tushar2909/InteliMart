@@ -34,7 +34,7 @@ public class Product {
 	private Long id;
 	
 	@Enumerated(EnumType.STRING)
-	private ProductCategory  pcategory;
+	private ProductCategory pcategory;
 	
 	@Column(nullable = false)
 	private BigDecimal price;
@@ -45,18 +45,14 @@ public class Product {
 	
 	@Column(nullable = false)
 
-	private int unitsAvaliable;
+	private int unitsAvailable;
 	
-	@Column(nullable = false)
+//	@Column(nullable = "true")
 	private Blob images;
 	
-	
-	@JoinColumn
 	@ManyToOne
+	@JoinColumn
 	private Seller seller;
-//	
-//	@ManyToOne
-//	Categ
-	
 
+	
 }

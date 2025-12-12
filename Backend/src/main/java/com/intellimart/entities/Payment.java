@@ -21,42 +21,39 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@ToString(exclude ="orders")
-
-
 @Entity
 @Table(name = "payments")
-
+// FIX: Exclude the singular 'order' link (renamed for clarity)
+@ToString(exclude ="order") 
 public class Payment {
+    
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long pid;
+	private Long id; // FIX: Renamed from pid to standard 'id'
 	
+    // FIX: Standardized name
 	@Enumerated(EnumType.STRING)
-	private PaymentStatus pstatus;
+    @Column(name = "status", nullable = false)
+	private PaymentStatus status; 
 	
-	@Column(nullable = false)
-	private String gateway_payment_id;
+    // FIX: Added unique constraint for external ID
+    @Column(name = "gateway_payment_id", unique = true, nullable = false)
+	private String gatewayPaymentId; // Renamed from gateway_payment_id
 	
-	@Column(nullable = false)
+    // FIX: Added precision/scale for BigDecimal
+    @Column(precision = 10, scale = 2, nullable = false)
 	private BigDecimal amount;
 	
-	@Column(nullable = false)
-	private long transactionid;
+    // CRITICAL FIX: Deleted redundant 'transactionid' field
+    
+    // FIX: Standardized name
+    @Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
 	
-	@Column(nullable = false)
-	private LocalDateTime createdat;
-	
-	
-	
+	// 1:1 Link to Orders (OWNER side)
 	@OneToOne
-	@JoinColumn
-	private Orders orders;
+    // FIX: Enforced 1:1 constraint and clear FK name
+	@JoinColumn(name = "order_id", unique = true, nullable = false)
+	private Orders order; // FIX: Renamed from orders to singular 'order'
 	
-
-	
-	
-	
-	
-
 }
