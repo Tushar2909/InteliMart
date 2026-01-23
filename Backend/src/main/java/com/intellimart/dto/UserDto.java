@@ -1,16 +1,15 @@
 package com.intellimart.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intellimart.entities.Roles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UserDto {
 
     @NotBlank(message = "Name cannot be blank")
@@ -18,8 +17,6 @@ public class UserDto {
 
     @NotBlank(message = "Phone number is required")
     private String number;
-
-    private Roles role;
 
     @Email(message = "Invalid Email format")
     private String email;

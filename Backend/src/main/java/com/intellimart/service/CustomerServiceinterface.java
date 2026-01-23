@@ -1,13 +1,17 @@
 package com.intellimart.service;
 
 import java.util.List;
-
 import com.intellimart.dto.CustomerDto;
 
 public interface CustomerServiceinterface {
-	//public CustomerDto getcustomerbyid(Long id);
-	public CustomerDto findById(Long id);
-	public String addcustomer(CustomerDto customerdto);
-	 public List<CustomerDto> getallcustomers();
-	
+
+    CustomerDto findById(Long id);
+
+    String addcustomer(CustomerDto customerDto);
+
+    List<CustomerDto> getallcustomers();
+
+    String updatecustomer(Long id, CustomerDto customerDto);
+
+    String deletecustomer(Long id);
 }

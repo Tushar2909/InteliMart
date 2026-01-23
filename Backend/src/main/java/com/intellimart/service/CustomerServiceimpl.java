@@ -1,202 +1,170 @@
 package com.intellimart.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.intellimart.dto.CustomerDto;
 import com.intellimart.dto.UserDto;
 import com.intellimart.entities.Customer;
+import com.intellimart.entities.Roles;
 import com.intellimart.entities.User;
 import com.intellimart.repos.CustomerRepo;
+import com.intellimart.repos.UserRepo;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomerServiceimpl implements CustomerServiceinterface {
 
     private final CustomerRepo customerRepo;
+    private final UserRepo userRepo;
     private final ModelMapper mapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @PostConstruct
-    public void init() {
-        // no special custom mappings required if CustomerDto contains a "UserDto user" field
-        // and UserDto fields have the same names as User entity fields.
-        // If you later want flattening (user fields at top-level of CustomerDto), we can add mappings.
-    }
+    // ================= GET CUSTOMER =================
 
-    /**
-     * Read method — keep a read-only transaction so lazy user can be initialized safely.
-     */
     @Override
-    @Transactional(Transactional.TxType.REQUIRED)
+    @Transactional(readOnly = true)
     public CustomerDto findById(Long id) {
-        Customer customer = customerRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
 
-        // touch user inside transaction to ensure the proxy is initialized (defensive)
-        if (customer.getUser() != null) {
-            customer.getUser().getName();
-        }
+        Customer customer = customerRepo.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Customer not found or account deactivated. ID: " + id));
 
-        // ModelMapper will map nested User -> UserDto automatically
         return mapper.map(customer, CustomerDto.class);
     }
 
-    /**
-     * Create a new customer (only user part is considered). Returns simple success string.
-     */
+    // ================= REGISTER CUSTOMER =================
+
     @Override
     public String addcustomer(CustomerDto dto) {
+
         if (dto == null || dto.getUser() == null) {
-            throw new IllegalArgumentException("CustomerDto and nested UserDto must be provided");
+            throw new RuntimeException("Customer details and user info are required");
         }
 
-        // Map UserDto -> User entity
-        User user = mapper.map(dto.getUser(), User.class);
+        UserDto uDto = dto.getUser();
 
-        // TODO: Hash password here using PasswordEncoder when you add security:
-        // if (dto.getUser().getPassword() != null) {
-        //     user.setPassword(passwordEncoder.encode(dto.getUser().getPassword()));
-        // }
+        // Duplicate email check
+        if (userRepo.findByEmailAndIsDeletedFalse(uDto.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already registered: " + uDto.getEmail());
+        }
 
-        // Create Customer entity and attach User
+        if (uDto.getPassword() == null || uDto.getPassword().isBlank()) {
+            throw new RuntimeException("Password is required");
+        }
+
+        // 🔐 Create User safely
+        User user = new User();
+        user.setName(uDto.getName());
+        user.setEmail(uDto.getEmail());
+        user.setNumber(uDto.getNumber());
+        user.setGender(uDto.getGender());
+        user.setPassword(passwordEncoder.encode(uDto.getPassword()));
+        user.setRole(Roles.ROLE_CUSTOMER);
+        user.setIsDeleted(false);
+
+        User savedUser = userRepo.save(user);
+
+        // Create Customer entry
         Customer customer = new Customer();
-        customer.setUser(user);
+        customer.setUser(savedUser);
+        customer.setDeleted(false);
 
-        // Save customer (cascade = ALL on Customer.user will persist User as well)
         customerRepo.save(customer);
 
-        return "Customer added successfully!";
+        return "Customer registered successfully with email: " + savedUser.getEmail();
     }
 
+    // ================= GET ALL CUSTOMERS =================
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CustomerDto> getallcustomers() {
 
-        List<Customer> customers = customerRepo.findAll();
+        List<Customer> customers = customerRepo.findAllByIsDeletedFalse();
+        List<CustomerDto> result = new ArrayList<>();
 
-        return customers.stream()
-                .map(customer -> mapper.map(customer, CustomerDto.class))
-                .toList();
+        for (Customer customer : customers) {
+            result.add(mapper.map(customer, CustomerDto.class));
+        }
+
+        return result;
     }
 
-	public String deletecustomer(Long id) {
-		// TODO Auto-generated method stub
-		
-	      Customer customer = customerRepo.findById(id)
-	              .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-	      
-	      customerRepo.delete(customer);
+    // ================= SOFT DELETE CUSTOMER =================
 
-	      
-	      
+    @Override
+    public String deletecustomer(Long id) {
 
-		return "Customer with id  "+ id +" Deleted Sucessfully";
-	}
+        Customer customer = customerRepo.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Customer not found or already deactivated"));
 
-	
-	@Transactional
-	public String updatecustomer(Long id, CustomerDto customerDto) {
+        customer.setDeleted(true);
 
-	    Customer customer = customerRepo.findById(id)
-	            .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+        User user = customer.getUser();
+        if (user != null) {
+            user.setIsDeleted(true);
+            userRepo.save(user);
+        }
 
-	    User user = customer.getUser();
-	    UserDto u = customerDto.getUser();
-	    
-	    
-	    
-	    if (u.getName() != null) user.setName(u.getName());
-	    if (u.getNumber() != null) user.setNumber(u.getNumber());
-	    if (u.getEmail() != null) user.setEmail(u.getEmail());
-	    if (u.getRole() != null) user.setRole(u.getRole());
+        customerRepo.save(customer);
 
-	    // Gender — update only if sent
-	    if (u.getGender() != null) {
-	        user.setGender(u.getGender());
-	    }
+        return "Customer account deactivated successfully";
+    }
 
-	    // Password — update only if user provided new one (no encode)
-	    if (u.getPassword() != null && !customerDto.getUser().getPassword().isBlank()) {
-	        user.setPassword(u.getPassword());
-	    }
+    // ================= UPDATE CUSTOMER =================
 
-//	    // Update only fields provided in DTO
-//	    if (customerDto.getUser().getName() != null) user.setName(customerDto.getUser().getName());
-//	    if (customerDto.getUser().getNumber() != null) user.setNumber(customerDto.getUser().getNumber());
-//	    if (customerDto.getUser().getEmail() != null) user.setEmail(customerDto.getUser().getEmail());
-//	    if (customerDto.getUser().getRole() != null) user.setRole(customerDto.getUser().getRole());
-//
-//	    // Gender — update only if sent
-//	    if (customerDto.getUser().getGender() != null) {
-//	        user.setGender(customerDto.getUser().getGender());
-//	    }
-//
-//	    // Password — update only if user provided new one (no encode)
-//	    if (customerDto.getUser().getPassword() != null && !customerDto.getUser().getPassword().isBlank()) {
-//	        user.setPassword(customerDto.getUser().getPassword());
-//	    }
+    @Override
+    public String updatecustomer(Long id, CustomerDto customerDto) {
 
-	    customerRepo.save(customer);
-//	    user.setEmail(customerDto.getUser().getEmail());
+        Customer customer = customerRepo.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Cannot update: customer not found"));
 
-	    return "Customer with id " + id + " updated successfully";
-	}
+        User user = customer.getUser();
+        UserDto uDto = customerDto.getUser();
 
+        if (uDto == null) {
+            throw new RuntimeException("User data is required");
+        }
 
-	
-	
+        if (uDto.getName() != null) {
+            user.setName(uDto.getName());
+        }
 
+        if (uDto.getNumber() != null) {
+            user.setNumber(uDto.getNumber());
+        }
+
+        if (uDto.getGender() != null) {
+            user.setGender(uDto.getGender());
+        }
+
+        if (uDto.getEmail() != null &&
+            !uDto.getEmail().equals(user.getEmail())) {
+
+            if (userRepo.findByEmailAndIsDeletedFalse(uDto.getEmail()).isPresent()) {
+                throw new RuntimeException("Email already in use: " + uDto.getEmail());
+            }
+            user.setEmail(uDto.getEmail());
+        }
+
+        if (uDto.getPassword() != null && !uDto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(uDto.getPassword()));
+        }
+
+        userRepo.save(user);
+        customerRepo.save(customer);
+
+        return "Customer with id " + id + " updated successfully";
+    }
 }
-
-
-//public class CustomerServiceimpl implements CustomerServiceinterface  {
-//	private final CustomerRepo customerRepo;
-//	
-//	private final ModelMapper mapp;
-//	@Override
-//	public CustomerDto findById(Long id) {
-//		// TODO Auto-generated method stub
-//		 Customer customer = customerRepo.findById(id)
-//	                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-//		 
-//		 
-//	        User user = customer.getUser();
-//	        
-//	        CustomerDto dto = new CustomerDto(
-//	                customer.getId(),      // id from Customer table
-//	                user.getName(),        // name from User
-//	                user.getNumber(),      // number from User
-//	                user.getRole(),        // role from User
-//	                user.getEmail(),       // email from User
-//	                user.getPassword(),    // password from User
-//	                user.getGender()       // gender from User
-//	        );
-//
-////		  CustomerDto dto = mapp.map(customer, CustomerDto.class);
-//		 
-//		  return dto;
-//	}
-//	
-//
-//}
-
-
-
-
-//@PostConstruct
-//public void setupMappings() {
-//    mapper.typeMap(Customer.class, CustomerDto.class)
-//        .addMapping(src -> src.getUser().getName(), CustomerDto::setName)
-//        .addMapping(src -> src.getUser().getNumber(), CustomerDto::setNumber)
-//        .addMapping(src -> src.getUser().getRole(), CustomerDto::setRole)
-//        .addMapping(src -> src.getUser().getEmail(), CustomerDto::setEmail)
-//        .addMapping(src -> src.getUser().getPassword(), CustomerDto::setPassword)
-//        .addMapping(src -> src.getUser().getGender(), CustomerDto::setGender);
-//}
-
-
