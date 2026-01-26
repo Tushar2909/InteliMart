@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.intellimart.dto.AddressDto;
@@ -18,21 +19,25 @@ public class AddressController {
 
     private final AddressServiceInterface addressService;
 
-    // CUSTOMER add address
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @PostMapping("/{customerId}")
+    // ================= CUSTOMER → ADD OWN ADDRESS =================
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PostMapping
     public ResponseEntity<AddressDto> addAddress(
-            @PathVariable Long customerId,
+            Authentication auth,
             @RequestBody AddressDto dto) {
 
-        return ResponseEntity.ok(addressService.addAddress(customerId, dto));
+        return ResponseEntity.ok(
+                addressService.addAddressByEmail(auth.getName(), dto)
+        );
     }
 
-    // CUSTOMER view addresses
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/{customerId}")
-    public ResponseEntity<List<AddressDto>> getAddresses(@PathVariable Long customerId) {
+    // ================= CUSTOMER → GET OWN ADDRESSES =================
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @GetMapping
+    public ResponseEntity<List<AddressDto>> getAddresses(Authentication auth) {
 
-        return ResponseEntity.ok(addressService.getCustomerAddresses(customerId));
+        return ResponseEntity.ok(
+                addressService.getCustomerAddressesByEmail(auth.getName())
+        );
     }
 }

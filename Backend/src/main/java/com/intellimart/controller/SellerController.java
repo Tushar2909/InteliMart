@@ -7,11 +7,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.intellimart.dto.ProductDto;
 import com.intellimart.dto.SellerOrderDto;
 import com.intellimart.entities.User;
 import com.intellimart.repos.SellerRepo;
 import com.intellimart.repos.UserRepo;
 import com.intellimart.service.OrderServiceInterface;
+import com.intellimart.service.ProductServiceInterface;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class SellerController {
 
     private final OrderServiceInterface orderService;
+    private final ProductServiceInterface productService;
     private final UserRepo userRepo;
     private final SellerRepo sellerRepo;
 
@@ -40,5 +43,14 @@ public class SellerController {
                 .getId();
 
         return ResponseEntity.ok(orderService.getSellerOrders(sellerId));
+    }
+
+    // ================= SELLER → OWN PRODUCTS =================
+
+    @PreAuthorize("hasRole('SELLER')")
+    @GetMapping("/products")
+    public ResponseEntity<List<ProductDto>> sellerProducts(Authentication auth) {
+
+        return ResponseEntity.ok(productService.getSellerProducts(auth));
     }
 }

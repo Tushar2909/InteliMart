@@ -2,6 +2,7 @@ package com.intellimart.entities;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +23,6 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString(exclude = "user")
-
 public class Seller {
 
     @Id
@@ -35,10 +35,9 @@ public class Seller {
     @Column(precision = 3, scale = 2)
     private BigDecimal rating = BigDecimal.ZERO;
 
-    @OneToOne(fetch = FetchType.EAGER)    
+    // FIXED: single JoinColumn + cascade
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
-    
-    
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)

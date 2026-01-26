@@ -9,6 +9,8 @@ import lombok.*;
 public class SellerDto {
 
     private Long id;
+
     private String companyName;
-    private Long userId;
+
+    private UserDto user;   // <-- ADD THIS
 }

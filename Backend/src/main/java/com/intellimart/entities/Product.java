@@ -34,4 +34,7 @@ public class Product {
     private Seller seller;
 
     private boolean isDeleted = false;
+    @Column(length = 1000)
+    private String description;
+
 }

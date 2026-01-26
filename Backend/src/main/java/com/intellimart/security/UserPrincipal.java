@@ -21,23 +21,26 @@ public class UserPrincipal implements UserDetails {
     private final List<GrantedAuthority> authorities;
     private final boolean enabled;
 
-    // ✅ Constructor used during LOGIN (DB → Security)
+    // DB → Security (login)
     public UserPrincipal(User user) {
         this.userId = String.valueOf(user.getId());
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.role = user.getRole().name();
+        this.role = user.getRole().name();              // ROLE_ADMIN
         this.authorities = List.of(new SimpleGrantedAuthority(this.role));
-        this.enabled = !user.getIsDeleted();
+        this.enabled = !Boolean.TRUE.equals(user.getIsDeleted());
     }
 
-    // ✅ Constructor used during JWT validation (NO DB hit)
+    // JWT → Security (requests)
     public UserPrincipal(String userId, String email, String role) {
         this.userId = userId;
         this.email = email;
         this.password = null;
-        this.role = role;
-        this.authorities = List.of(new SimpleGrantedAuthority(role));
+
+        // 🔥 FORCE ROLE_ PREFIX
+        this.role = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+
+        this.authorities = List.of(new SimpleGrantedAuthority(this.role));
         this.enabled = true;
     }
 
@@ -46,16 +49,8 @@ public class UserPrincipal implements UserDetails {
         return authorities;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
+    @Override public String getPassword() { return password; }
+    @Override public String getUsername() { return email; }
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

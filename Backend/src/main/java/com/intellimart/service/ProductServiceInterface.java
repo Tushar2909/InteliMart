@@ -1,25 +1,26 @@
 package com.intellimart.service;
+
 import java.util.List;
 
-import com.intellimart.dto.ProductDto;
+import org.springframework.security.core.Authentication;
 
+import com.intellimart.dto.ProductDto;
+import com.intellimart.entities.ProductCategory;
 
 public interface ProductServiceInterface {
-	
-	    // 1. Fetch all products for the catalog
-	    List<ProductDto> getAllProducts(); 
 
-	    // 2. Fetch a single product for the details page
-	    ProductDto getProductById(Long id); 
+    List<ProductDto> getAllProducts(int page, int size);
 
-	    // 3. Add a new product (with null image support)
-	    ProductDto addProduct(ProductDto productDto); 
+    ProductDto getProductById(Long id);
 
-	    // 4. Delete a product from the database
-	    String deleteProduct(Long id);
+    ProductDto addProduct(Authentication auth, ProductDto productDto);
 
-		ProductDto updateProduct(Long id, ProductDto dto); 
-	
-	
+    ProductDto updateProduct(Authentication auth, Long id, ProductDto dto);
 
+    String deleteProduct(Authentication auth, Long id);
+
+    List<ProductDto> getProductsByCategory(ProductCategory category);
+
+    // ✅ SELLER INVENTORY
+    List<ProductDto> getSellerProducts(Authentication auth);
 }

@@ -1,11 +1,9 @@
 package com.intellimart.security;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,10 +35,13 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Skip auth & swagger
-        if (path.startsWith("/api/auth")
-                || path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")) {
+        // ✅ Public endpoints
+        if (
+            path.equals("/api/auth/login")
+            || path.equals("/api/auth/signup/customer")
+            || path.startsWith("/swagger-ui")
+            || path.startsWith("/v3/api-docs")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,6 +55,7 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
             }
 
             String jwt = authHeader.substring(7);
+
             Claims claims = jwtUtils.validateToken(jwt);
 
             String userId = claims.get("user_id", String.class);
@@ -62,17 +64,19 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
 
             UserPrincipal principal = new UserPrincipal(userId, email, role);
 
-            List<SimpleGrantedAuthority> authorities =
-                    List.of(new SimpleGrantedAuthority(role));
-
             Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(principal, null, authorities);
+                    new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            principal.getAuthorities()
+                    );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            log.error("JWT Error: {}", e.getMessage());
+            log.error("JWT Verification Failed", e);
 
             SecurityContextHolder.clearContext();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

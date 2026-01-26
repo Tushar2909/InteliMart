@@ -8,5 +8,6 @@ import com.intellimart.entities.Address;
 
 public interface AddressRepo extends JpaRepository<Address, Long> {
 
+    // ✅ ONLY fetch addresses of specific customer
     List<Address> findByCustomer_Id(Long customerId);
 }

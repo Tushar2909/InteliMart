@@ -6,13 +6,22 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.intellimart.dto.*;
+import com.intellimart.dto.ApiResponse;
+import com.intellimart.dto.CustomerDto;
+import com.intellimart.dto.LoginDto;
+import com.intellimart.dto.ResetPasswordDto;
+import com.intellimart.dto.SellerDto;
+import com.intellimart.dto.SigninResponse;
 import com.intellimart.security.JwtUtils;
 import com.intellimart.security.UserPrincipal;
 import com.intellimart.service.CustomerServiceinterface;
 import com.intellimart.service.SellerServiceInterface;
+import com.intellimart.service.UserServiceInterface;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,31 +34,27 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final CustomerServiceinterface customerService;
     private final SellerServiceInterface sellerService;
+    private final UserServiceInterface userService;   // ✅ added
 
-    // ================= CUSTOMER SIGNUP =================
     @PostMapping("/signup/customer")
     public ResponseEntity<ApiResponse> signupCustomer(@RequestBody CustomerDto dto) {
 
         String msg = customerService.addcustomer(dto);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
     }
 
-    // ================= SELLER SIGNUP (ADMIN ONLY) =================
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/signup/seller")
     public ResponseEntity<ApiResponse> signupSeller(@RequestBody SellerDto dto) {
 
         String msg = sellerService.addSeller(dto);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
     }
 
-    // ================= LOGIN (ALL ROLES) =================
     @PostMapping("/login")
     public ResponseEntity<SigninResponse> login(@RequestBody LoginDto request) {
 
@@ -65,11 +70,16 @@ public class AuthController {
         String token = jwtUtils.generateToken(principal);
 
         return ResponseEntity.ok(
-                new SigninResponse(
-                        token,
-                        "Login Successful",
-                        principal.getRole()
-                )
+                new SigninResponse(token, "Login Successful", principal.getRole())
         );
+    }
+
+    // ✅ PASSWORD RESET
+    @PostMapping("/reset-password")
+    public ResponseEntity<ApiResponse> reset(@RequestBody ResetPasswordDto dto) {
+
+        userService.resetPassword(dto.getEmail(), dto.getNewPassword());
+
+        return ResponseEntity.ok(new ApiResponse(true, "Password updated"));
     }
 }

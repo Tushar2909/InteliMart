@@ -33,18 +33,19 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
 
         Customer customer =
                 customerRepo.findByIdAndIsDeletedFalse(id)
-                        .orElseThrow();
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        return mapper.map(customer, CustomerDto.class);
+        return toDto(customer);
     }
 
     @Override
     public String addcustomer(CustomerDto dto) {
 
-        UserDto uDto = dto.getUser();
+        if (userRepo.existsByEmail(dto.getUser().getEmail())) {
+            throw new RuntimeException("Email already registered");
+        }
 
-        if (userRepo.findByEmailAndIsDeletedFalse(uDto.getEmail()).isPresent())
-            throw new RuntimeException("Email already exists");
+        UserDto uDto = dto.getUser();
 
         User user = new User();
         user.setName(uDto.getName());
@@ -72,7 +73,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
         List<CustomerDto> list = new ArrayList<>();
 
         for (Customer c : customerRepo.findAllByIsDeletedFalse()) {
-            list.add(mapper.map(c, CustomerDto.class));
+            list.add(toDto(c));
         }
 
         return list;
@@ -83,7 +84,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
 
         Customer c =
                 customerRepo.findByIdAndIsDeletedFalse(id)
-                        .orElseThrow();
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         c.setDeleted(true);
         c.getUser().setIsDeleted(true);
@@ -96,7 +97,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
 
         Customer c =
                 customerRepo.findByIdAndIsDeletedFalse(id)
-                        .orElseThrow();
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         User u = c.getUser();
         UserDto ud = dto.getUser();
@@ -108,5 +109,51 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
         userRepo.save(u);
 
         return "Updated";
+    }
+
+    @Override
+    public CustomerDto findByEmail(String email) {
+
+        Customer c = customerRepo.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        return toDto(c);
+    }
+
+    @Override
+    public String updateByEmail(String email, CustomerDto dto) {
+
+        Customer c = customerRepo.findByUser_Email(email)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        User u = c.getUser();
+
+        u.setName(dto.getUser().getName());
+        u.setNumber(dto.getUser().getNumber());
+        u.setGender(dto.getUser().getGender());
+
+        userRepo.save(u);
+
+        return "Customer updated successfully";
+    }
+
+    // ================= DTO MAPPER =================
+
+    private CustomerDto toDto(Customer c) {
+
+        CustomerDto dto = new CustomerDto();
+        dto.setId(c.getId());
+
+        User u = c.getUser();
+        if (u != null) {
+            UserDto ud = new UserDto();
+            ud.setName(u.getName());
+            ud.setEmail(u.getEmail());
+            ud.setNumber(u.getNumber());
+            ud.setGender(u.getGender());
+            dto.setUser(ud);
+        }
+
+        return dto;
     }
 }

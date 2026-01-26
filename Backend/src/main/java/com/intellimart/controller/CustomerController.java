@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import com.intellimart.dto.CustomerDto;
@@ -18,32 +19,38 @@ public class CustomerController {
 
     private final CustomerServiceinterface customerService;
 
-    // PUBLIC REGISTER
+    // REGISTER (public)
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody CustomerDto dto) {
         return ResponseEntity.ok(customerService.addcustomer(dto));
     }
 
-    // CUSTOMER
-    @GetMapping("/{id}")
-    public ResponseEntity<CustomerDto> getCustomer(@PathVariable Long id) {
-        return ResponseEntity.ok(customerService.findById(id));
+    // ✅ CUSTOMER gets OWN data (by email from JWT)
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/me")
+    public ResponseEntity<CustomerDto> me(Authentication auth) {
+        return ResponseEntity.ok(customerService.findByEmail(auth.getName()));
     }
 
-    // CUSTOMER
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateCustomer(@PathVariable Long id,
-                                                 @RequestBody CustomerDto dto) {
-        return ResponseEntity.ok(customerService.updatecustomer(id, dto));
+    // ✅ CUSTOMER updates OWN data
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PutMapping("/me")
+    public ResponseEntity<String> update(Authentication auth,
+                                         @RequestBody CustomerDto dto) {
+
+        return ResponseEntity.ok(
+                customerService.updateByEmail(auth.getName(), dto)
+        );
     }
 
-    // CUSTOMER & ADMIN
+    // ADMIN delete
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.deletecustomer(id));
     }
 
-    // ADMIN ONLY
+    // ADMIN get all
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {

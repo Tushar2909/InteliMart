@@ -22,10 +22,11 @@ public class AddressServiceImpl implements AddressServiceInterface {
     private final CustomerRepo customerRepo;
 
     @Override
-    public AddressDto addAddress(Long customerId, AddressDto dto) {
+    public AddressDto addAddressByEmail(String email, AddressDto dto) {
 
-        Customer customer = customerRepo.findByIdAndIsDeletedFalse(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+        Customer customer =
+                customerRepo.findByUser_Email(email)
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         Address a = new Address();
         a.setCity(dto.getCity());
@@ -37,23 +38,45 @@ public class AddressServiceImpl implements AddressServiceInterface {
 
         Address saved = addressRepo.save(a);
 
-        dto.setAid(saved.getAid());
-        return dto;
+        return toDto(saved);
+    }
+
+    @Override
+    public List<AddressDto> getCustomerAddressesByEmail(String email) {
+
+        Customer customer =
+                customerRepo.findByUser_Email(email)
+                        .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        return addressRepo.findByCustomer_Id(customer.getId())
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    // ===== unused ID methods kept for compatibility =====
+
+    @Override
+    public AddressDto addAddress(Long customerId, AddressDto dto) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public List<AddressDto> getCustomerAddresses(Long customerId) {
+        throw new UnsupportedOperationException();
+    }
 
-        return addressRepo.findByCustomer_Id(customerId)
-                .stream()
-                .map(a -> new AddressDto(
-                        a.getAid(),
-                        a.getCity(),
-                        a.getDetailAddress(),
-                        a.getState(),
-                        a.getStreet(),
-                        a.getZipcode()
-                ))
-                .toList();
+    // ================= DTO =================
+
+    private AddressDto toDto(Address a) {
+
+        return new AddressDto(
+                a.getAid(),
+                a.getCity(),
+                a.getDetailAddress(),
+                a.getState(),
+                a.getStreet(),
+                a.getZipcode()
+        );
     }
 }
