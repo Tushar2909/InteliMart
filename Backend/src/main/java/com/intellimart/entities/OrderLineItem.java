@@ -1,14 +1,15 @@
 package com.intellimart.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "order_items")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = "order") // Prevent recursion
 public class OrderLineItem {
 
     @Id
@@ -19,12 +20,13 @@ public class OrderLineItem {
 
     private Double unitPrice;
 
-    // This MUST match the mappedBy="order" in Orders.java
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    @JsonIgnore
+    @ToString.Exclude
     private Orders order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     private Product product;
 }

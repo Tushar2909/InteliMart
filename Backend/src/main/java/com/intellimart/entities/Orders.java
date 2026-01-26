@@ -3,14 +3,19 @@ package com.intellimart.entities;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name ="orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Orders {
 
     @Id
@@ -24,16 +29,22 @@ public class Orders {
 
     private BigDecimal totalAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ToString.Exclude
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Address address;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
     private Set<OrderLineItem> lineItems;
 
     @OneToOne(mappedBy = "order")
+    @JsonIgnore
+    @ToString.Exclude
     private Payment payment;
 
     @Column(name = "is_deleted")

@@ -2,21 +2,17 @@ package com.intellimart.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.intellimart.dto.ApiResponse;
-import com.intellimart.dto.CustomerDto;
-import com.intellimart.dto.LoginDto;
-import com.intellimart.dto.SigninResponse;
+import com.intellimart.dto.*;
 import com.intellimart.security.JwtUtils;
 import com.intellimart.security.UserPrincipal;
 import com.intellimart.service.CustomerServiceinterface;
+import com.intellimart.service.SellerServiceInterface;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,8 +24,32 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final CustomerServiceinterface customerService;
+    private final SellerServiceInterface sellerService;
 
-    // ================= LOGIN =================
+    // ================= CUSTOMER SIGNUP =================
+    @PostMapping("/signup/customer")
+    public ResponseEntity<ApiResponse> signupCustomer(@RequestBody CustomerDto dto) {
+
+        String msg = customerService.addcustomer(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse(true, msg));
+    }
+
+    // ================= SELLER SIGNUP (ADMIN ONLY) =================
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/signup/seller")
+    public ResponseEntity<ApiResponse> signupSeller(@RequestBody SellerDto dto) {
+
+        String msg = sellerService.addSeller(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse(true, msg));
+    }
+
+    // ================= LOGIN (ALL ROLES) =================
     @PostMapping("/login")
     public ResponseEntity<SigninResponse> login(@RequestBody LoginDto request) {
 
@@ -51,16 +71,5 @@ public class AuthController {
                         principal.getRole()
                 )
         );
-    }
-
-    // ================= CUSTOMER SIGNUP =================
-    @PostMapping("/signup/customer")
-    public ResponseEntity<ApiResponse> signupCustomer(@RequestBody CustomerDto dto) {
-
-        String message = customerService.addcustomer(dto);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new ApiResponse(true, message));
     }
 }

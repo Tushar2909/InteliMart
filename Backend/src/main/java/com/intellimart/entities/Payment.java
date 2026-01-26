@@ -1,35 +1,49 @@
 package com.intellimart.entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
-@Table(name="payments")
+@Table(name = "payments")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal amount;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", unique = true)
+    @JsonIgnore
+    @ToString.Exclude
+    private Orders order;
 
-    private String razorpayOrderId;
-    private String razorpayPaymentId;
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    private LocalDateTime createdAt;
+    private String paymentMode;
 
-    @OneToOne
-    @JoinColumn(name="order_id")
-    private Orders order;
+    private LocalDateTime paymentTime;
 
-    @Column(name = "is_deleted")
+    private LocalDate paymentDate;
+
+    private String paymentMethod;
+
+    private String razorpayOrderId;
+
+    private String razorpayPaymentId;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     private boolean isDeleted = false;
 }

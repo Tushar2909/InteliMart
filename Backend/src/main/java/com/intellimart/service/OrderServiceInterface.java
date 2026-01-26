@@ -1,15 +1,22 @@
 package com.intellimart.service;
 
 import java.util.List;
-import com.intellimart.entities.Orders;
+
+import com.intellimart.dto.OrderDto;
+import com.intellimart.dto.SellerOrderDto;
+import com.intellimart.entities.Status;
 
 public interface OrderServiceInterface {
-    // 1. Process checkout for a specific customer
-    Orders placeOrder(Long customerId);
-    
-    // 2. View order history
-    List<Orders> getCustomerOrders(Long customerId);
-    
-    // 3. View specific order details
-    Orders getOrderById(Long orderId);
+
+    OrderDto placeOrder(Long customerId);
+
+    List<OrderDto> getCustomerOrdersByEmail(String email);
+
+    OrderDto getOrderById(Long orderId);
+
+    List<OrderDto> getAllOrders();
+
+    OrderDto updateOrderStatus(Long orderId, Status status);
+
+    List<SellerOrderDto> getSellerOrders(Long sellerId);
 }

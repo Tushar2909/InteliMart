@@ -10,11 +10,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDto {
+public class SellerOrderDto {
 
     private Long orderId;
-    private Long customerId;
+    private String productName;
+    private Integer quantity;
+    private BigDecimal amount;
     private Status status;
     private LocalDate orderDate;
-    private BigDecimal totalAmount;
 }

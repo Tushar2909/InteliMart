@@ -37,11 +37,10 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // 🔥 Skip auth & swagger endpoints
+        // Skip auth & swagger
         if (path.startsWith("/api/auth")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")) {
-
             filterChain.doFilter(request, response);
             return;
         }
@@ -59,18 +58,17 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
 
             String userId = claims.get("user_id", String.class);
             String role = claims.get("user_role", String.class);
+            String email = claims.getSubject();
+
+            UserPrincipal principal = new UserPrincipal(userId, email, role);
 
             List<SimpleGrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority(role));
-
-            UserPrincipal principal =
-                    new UserPrincipal(userId, claims.getSubject(), null, authorities, role);
 
             Authentication authentication =
                     new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
