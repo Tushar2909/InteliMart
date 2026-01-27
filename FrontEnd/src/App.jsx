@@ -6,6 +6,7 @@ import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import SellerDashboard from "./pages/seller/SellerDashboard";
+import SellerOrders from "./pages/seller/SellerOrders";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -29,11 +30,9 @@ export default function App() {
         <Route path="/" element={<Products />} />
         <Route path="/product/:id" element={<ProductDetails />} />
 
-        {/* AUTH */}
         <Route path="/login" element={!token ? <Login /> : <Navigate to="/" />} />
         <Route path="/signup" element={!token ? <Signup /> : <Navigate to="/" />} />
 
-        {/* CUSTOMER */}
         <Route path="/cart" element={
           <ProtectedRoute role="ROLE_CUSTOMER">
             <Cart />
@@ -46,14 +45,18 @@ export default function App() {
           </ProtectedRoute>
         } />
 
-        {/* SELLER */}
         <Route path="/seller" element={
           <ProtectedRoute role="ROLE_SELLER">
             <SellerDashboard />
           </ProtectedRoute>
         } />
 
-        {/* ADMIN */}
+        <Route path="/seller/orders" element={
+          <ProtectedRoute role="ROLE_SELLER">
+            <SellerOrders />
+          </ProtectedRoute>
+        } />
+
         <Route path="/admin" element={
           <ProtectedRoute role="ROLE_ADMIN">
             <AdminDashboard />

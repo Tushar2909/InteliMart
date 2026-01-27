@@ -46,7 +46,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return authorities;	
     }
 
     @Override public String getPassword() { return password; }
