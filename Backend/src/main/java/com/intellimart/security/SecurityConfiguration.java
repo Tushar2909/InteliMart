@@ -1,5 +1,7 @@
 package com.intellimart.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +33,14 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+
+                // ================= PUBLIC =================
                 .requestMatchers(
                         "/api/auth/**",
                         "/swagger-ui/**",
@@ -41,6 +49,19 @@ public class SecurityConfiguration {
 
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 
+                // ================= CUSTOMER =================
+                .requestMatchers("/api/customer/**").hasAuthority("ROLE_CUSTOMER")
+                .requestMatchers("/api/address/**").hasAuthority("ROLE_CUSTOMER")
+                .requestMatchers("/api/cart/**").hasAuthority("ROLE_CUSTOMER")
+
+                // ================= SELLER =================
+                .requestMatchers("/api/seller/**").hasAuthority("ROLE_SELLER")
+                .requestMatchers("/api/products/my").hasAuthority("ROLE_SELLER")
+
+                // ================= ADMIN =================
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+
+                // ================= FALLBACK =================
                 .anyRequest().authenticated()
             );
 
@@ -48,6 +69,24 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+
+    // ===================== CORS CONFIG =====================
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
+    }
+    // =====================================================
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config)

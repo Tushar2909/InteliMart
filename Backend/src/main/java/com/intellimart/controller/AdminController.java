@@ -19,32 +19,28 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")   // 🔴 IMPORTANT
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class AdminController {
 
     private final SellerServiceInterface sellerService;
     private final OrderServiceInterface orderService;
     private final PaymentServiceInterface paymentService;
 
-    // ================= SELLERS =================
     @GetMapping("/sellers")
     public ResponseEntity<List<SellerDto>> sellers() {
         return ResponseEntity.ok(sellerService.getAllSellers());
     }
 
-    // ================= ORDERS =================
     @GetMapping("/orders")
     public ResponseEntity<List<OrderDto>> orders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
-    // ================= PAYMENTS =================
     @GetMapping("/payments")
     public ResponseEntity<List<PaymentDto>> payments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
-    // ================= UPDATE ORDER STATUS =================
     @PutMapping("/orders/{orderId}/status")
     public ResponseEntity<OrderDto> updateStatus(
             @PathVariable Long orderId,

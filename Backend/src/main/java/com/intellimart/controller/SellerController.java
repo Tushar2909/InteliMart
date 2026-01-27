@@ -27,9 +27,9 @@ public class SellerController {
     private final UserRepo userRepo;
     private final SellerRepo sellerRepo;
 
-    // ================= SELLER → OWN ORDERS =================
+    // ================= SELLER ORDERS =================
 
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasAuthority('ROLE_SELLER')")
     @GetMapping("/orders")
     public ResponseEntity<List<SellerOrderDto>> sellerOrders(Authentication auth) {
 
@@ -45,9 +45,9 @@ public class SellerController {
         return ResponseEntity.ok(orderService.getSellerOrders(sellerId));
     }
 
-    // ================= SELLER → OWN PRODUCTS =================
+    // ================= SELLER PRODUCTS =================
 
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasAuthority('ROLE_SELLER')")
     @GetMapping("/products")
     public ResponseEntity<List<ProductDto>> sellerProducts(Authentication auth) {
 

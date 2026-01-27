@@ -25,15 +25,15 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.addcustomer(dto));
     }
 
-    // ✅ CUSTOMER gets OWN data (by email from JWT)
-    @PreAuthorize("hasRole('CUSTOMER')")
+    // ================= CUSTOMER =================
+
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @GetMapping("/me")
     public ResponseEntity<CustomerDto> me(Authentication auth) {
         return ResponseEntity.ok(customerService.findByEmail(auth.getName()));
     }
 
-    // ✅ CUSTOMER updates OWN data
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @PutMapping("/me")
     public ResponseEntity<String> update(Authentication auth,
                                          @RequestBody CustomerDto dto) {
@@ -43,15 +43,15 @@ public class CustomerController {
         );
     }
 
-    // ADMIN delete
-    @PreAuthorize("hasRole('ADMIN')")
+    // ================= ADMIN =================
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.deletecustomer(id));
     }
 
-    // ADMIN get all
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getallcustomers());
