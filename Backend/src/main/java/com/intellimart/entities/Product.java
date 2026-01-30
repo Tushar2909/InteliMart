@@ -33,8 +33,10 @@ public class Product {
     @ToString.Exclude
     private Seller seller;
 
+    // 🔥 IMPORTANT — prevents NULL ever again
+    @Column(nullable = false)
     private boolean isDeleted = false;
+
     @Column(length = 1000)
     private String description;
-
 }

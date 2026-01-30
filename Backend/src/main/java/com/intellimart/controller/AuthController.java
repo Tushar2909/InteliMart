@@ -34,52 +34,63 @@ public class AuthController {
     private final JwtUtils jwtUtils;
     private final CustomerServiceinterface customerService;
     private final SellerServiceInterface sellerService;
-    private final UserServiceInterface userService;   // ✅ added
+    private final UserServiceInterface userService;
 
+    /**
+     * Customer Registration
+     */
     @PostMapping("/signup/customer")
     public ResponseEntity<ApiResponse> signupCustomer(@RequestBody CustomerDto dto) {
-
         String msg = customerService.addcustomer(dto);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
     }
 
+    /**
+     * Seller Registration (Admin Only)
+     */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/signup/seller")
     public ResponseEntity<ApiResponse> signupSeller(@RequestBody SellerDto dto) {
-
         String msg = sellerService.addSeller(dto);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
     }
 
+    /**
+     * Login: Authenticates user and returns JWT with User Details
+     */
     @PostMapping("/login")
     public ResponseEntity<SigninResponse> login(@RequestBody LoginDto request) {
+        // 1. Authenticate credentials
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
 
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                request.getEmail(),
-                                request.getPassword()
-                        )
-                );
-
+        // 2. Extract Principal
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+        
+        // 3. Generate JWT Token
         String token = jwtUtils.generateToken(principal);
 
+        // 4. Map the principal's ID to the response to satisfy frontend requirements
+        // This ensures the userId is available in LocalStorage for Address/Checkout logic
         return ResponseEntity.ok(
-                new SigninResponse(token, "Login Successful", principal.getRole())
+                new SigninResponse(
+                    token, 
+                    "Login Successful", 
+                    principal.getRole(), 
+                    principal.getId() // Returns Long from UserPrincipal
+                )
         );
     }
 
-    // ✅ PASSWORD RESET
+    /**
+     * Password Reset
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse> reset(@RequestBody ResetPasswordDto dto) {
-
         userService.resetPassword(dto.getEmail(), dto.getNewPassword());
-
         return ResponseEntity.ok(new ApiResponse(true, "Password updated"));
     }
 }

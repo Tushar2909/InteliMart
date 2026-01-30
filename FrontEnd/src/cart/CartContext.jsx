@@ -1,49 +1,59 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import api from "../api/axios";
+import { useAuth } from "../auth/AuthContext";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const { user } = useAuth();
+  const [cart, setCart] = useState([]);
 
-  const [cart, setCart] = useState(() =>
-    JSON.parse(localStorage.getItem("cart")) || []
-  );
-
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = (product) => {
-    setCart(prev => {
-      const found = prev.find(p => p.id === product.id);
-      if (found) {
-        return prev.map(p =>
-          p.id === product.id ? { ...p, qty: p.qty + 1 } : p
-        );
-      }
-      return [...prev, { ...product, qty: 1 }];
-    });
+  const fetchCart = async () => {
+    if (!user?.id) return;
+    console.log(user.id);
+    const res = await api.get(`/api/cart/${user.id}`);
+    setCart(res.data || []);
   };
 
-  const removeFromCart = (id) =>
-    setCart(prev => prev.filter(p => p.id !== id));
+  useEffect(() => {
+    fetchCart();
+  }, [user?.id]);
 
-  const changeQty = (id, qty) =>
-    setCart(prev =>
-      prev.map(p => p.id === id ? { ...p, qty } : p)
-    );
+  const addToCart = async (productId, qty = 1) => {
+    if (!user?.id) return alert("Login first");
 
-  const clearCart = () => setCart([]);
+    await api.post(`/api/cart/add/${user.id}/${productId}/${qty}`);
+    fetchCart();
+  };
 
-  const totalItems = cart.reduce((a, b) => a + b.qty, 0);
+  const changeQty = async (cartItemId, quantity) => {
+    if (quantity < 1) return;
+    await api.put(`/api/cart/update/${cartItemId}`, null, {
+      params: { quantity }
+    });
+    fetchCart();
+  };
+
+  const removeFromCart = async (cartItemId) => {
+    await api.delete(`/api/cart/remove/${cartItemId}`);
+    fetchCart();
+  };
+
+  const clearCart = async () => {
+    await api.delete(`/api/cart/clear/${user.id}`);
+    setCart([]);
+  };
+
+  const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
   return (
     <CartContext.Provider value={{
       cart,
       addToCart,
-      removeFromCart,
       changeQty,
+      removeFromCart,
       clearCart,
-      totalItems
+      cartCount
     }}>
       {children}
     </CartContext.Provider>

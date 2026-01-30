@@ -35,47 +35,39 @@ public class SecurityConfiguration {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
-                // ================= PUBLIC =================
-                .requestMatchers(
-                        "/api/auth/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                ).permitAll()
+                .requestMatchers("/api/auth/**","/swagger-ui/**","/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/products/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 
-                .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+                // ADMIN FIRST
+                .requestMatchers("/api/admin/**","/api/products/**","/api/orders/**","/api/payments/**",
+                        "/api/customers/**","/api/customer/**","/api/address/**",
+                        "/api/addresses/**","/api/cart/**")
+                .hasAuthority("ROLE_ADMIN")
 
-                // ================= CUSTOMER =================
-                .requestMatchers("/api/customer/**").hasAuthority("ROLE_CUSTOMER")
-                .requestMatchers("/api/address/**").hasAuthority("ROLE_CUSTOMER")
-                .requestMatchers("/api/cart/**").hasAuthority("ROLE_CUSTOMER")
+                // SELLER
+                .requestMatchers("/api/seller/**")
+                .hasAuthority("ROLE_SELLER")
 
-                // ================= SELLER =================
-                .requestMatchers("/api/seller/**").hasAuthority("ROLE_SELLER")
-                .requestMatchers("/api/products/my").hasAuthority("ROLE_SELLER")
+                // CUSTOMER
+                .requestMatchers("/api/customer/**","/api/address/**","/api/addresses/**",
+                        "/api/cart/**","/api/orders/**","/api/payments/**","/api/customers/me")
+                .hasAuthority("ROLE_CUSTOMER")
 
-                // ================= ADMIN =================
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-
-                // ================= FALLBACK =================
                 .anyRequest().authenticated()
             );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
-    // ===================== CORS CONFIG =====================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-
         config.setAllowedOrigins(List.of("http://localhost:5173"));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
@@ -83,14 +75,11 @@ public class SecurityConfiguration {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
-    // =====================================================
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
@@ -99,3 +88,4 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 }
+

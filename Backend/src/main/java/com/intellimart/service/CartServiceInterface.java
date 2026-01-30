@@ -1,13 +1,14 @@
 package com.intellimart.service;
 
+import com.intellimart.dto.CartItemDto;
+import com.intellimart.entities.CartItem;
 import java.util.List;
 
-//import com.intellimart.dto.CustomerDto;
-import com.intellimart.entities.CartItem;
-
 public interface CartServiceInterface {
-    String addItemToCart(Long customerId, Long productId, int quantity);
-    List<CartItem> getCartByCustomer(Long customerId);
-    String removeItemFromCart(Long cartItemId);
+    String addItemToCart(Long userId, Long productId, int quantity);
+    List<CartItemDto> getCartDtos(Long userId);
+    List<CartItem> getCartByCustomer(Long userId);
+    String clearCart(Long userId);
     String updateQuantity(Long cartItemId, int quantity);
+    String removeItemFromCart(Long cartItemId);
 }

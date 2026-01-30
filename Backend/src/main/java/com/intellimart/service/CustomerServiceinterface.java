@@ -18,5 +18,7 @@ public interface CustomerServiceinterface {
     CustomerDto findByEmail(String email);
 
     String updateByEmail(String email, CustomerDto dto);
+ // ADMIN helpers
+
 
 }

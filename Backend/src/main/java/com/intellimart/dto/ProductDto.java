@@ -2,26 +2,28 @@ package com.intellimart.dto;
 
 import java.math.BigDecimal;
 
-import com.intellimart.entities.ProductCategory;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
 public class ProductDto {
 
     private Long id;
 
     private String name;
 
-    private ProductCategory pcategory;   // 🔥 ENUM not String
-
     private BigDecimal price;
 
-    private Integer unitsAvailable;
-
-    private String imageUrl;
+    // frontend sends STRING
+    private String pcategory;
 
     private String description;
 
+    private String imageUrl;
+
+    private Integer unitsAvailable;
+
+    // ✅ ADD THIS (used in mapper, admin, seller)
     private Long sellerId;
 }

@@ -1,30 +1,12 @@
 package com.intellimart.dto;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 public class UserDto {
-
-    @NotBlank(message = "Name is required")
+    private Long id; // ✅ Add this field so ud.setId() works in your Service
     private String name;
-
-    @NotBlank(message = "Phone number is required")
-    private String number;
-
-    @Email(message = "Invalid email")
-    @NotBlank(message = "Email is required")
     private String email;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @NotBlank(message = "Password is required")
-    @Size(min = 4, message = "Password must be at least 4 chars")
-    private String password;
-
+    private String number;
     private String gender;
+    private String password;
 }

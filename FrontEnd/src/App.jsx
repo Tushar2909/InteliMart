@@ -15,7 +15,9 @@ import { useAuth } from "./auth/AuthContext";
 export default function App() {
 
   const location = useLocation();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
+
+  const role = user?.role;
 
   const hideNavbar =
     location.pathname === "/login" ||
@@ -27,42 +29,109 @@ export default function App() {
 
       <Routes>
 
-        <Route path="/" element={<Products />} />
+        {/* ROOT REDIRECT BASED ON ROLE */}
+        <Route
+          path="/"
+          element={
+            role === "ROLE_ADMIN"
+              ? <Navigate to="/admin" />
+              : role === "ROLE_SELLER"
+              ? <Navigate to="/seller" />
+              : <Products />
+          }
+        />
+
+        {/* PRODUCT DETAILS (CUSTOMER ONLY LOGICALLY — UI guarded by navbar) */}
         <Route path="/product/:id" element={<ProductDetails />} />
 
-        <Route path="/login" element={!token ? <Login /> : <Navigate to="/" />} />
-        <Route path="/signup" element={!token ? <Signup /> : <Navigate to="/" />} />
+        {/* AUTH */}
+        <Route
+          path="/login"
+          element={
+            !token
+              ? <Login />
+              : role === "ROLE_ADMIN"
+              ? <Navigate to="/admin" />
+              : role === "ROLE_SELLER"
+              ? <Navigate to="/seller" />
+              : <Navigate to="/" />
+          }
+        />
 
-        <Route path="/cart" element={
-          <ProtectedRoute role="ROLE_CUSTOMER">
-            <Cart />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/signup"
+          element={!token ? <Signup /> : <Navigate to="/" />}
+        />
 
-        <Route path="/customer" element={
-          <ProtectedRoute role="ROLE_CUSTOMER">
-            <CustomerDashboard />
-          </ProtectedRoute>
-        } />
+        {/* CUSTOMER */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute role="ROLE_CUSTOMER">
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/seller" element={
-          <ProtectedRoute role="ROLE_SELLER">
-            <SellerDashboard />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/customer"
+          element={
+            <ProtectedRoute role="ROLE_CUSTOMER">
+              <CustomerDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/seller/orders" element={
-          <ProtectedRoute role="ROLE_SELLER">
-            <SellerOrders />
-          </ProtectedRoute>
-        } />
+        {/* SELLER */}
+        <Route
+          path="/seller"
+          element={
+            <ProtectedRoute role="ROLE_SELLER">
+              <SellerDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        <Route path="/admin" element={
-          <ProtectedRoute role="ROLE_ADMIN">
-            <AdminDashboard />
-          </ProtectedRoute>
-        } />
+        <Route
+          path="/seller/orders"
+          element={
+            <ProtectedRoute role="ROLE_SELLER">
+              <SellerOrders />
+            </ProtectedRoute>
+          }
+        />
 
+        {/* SELLER PROFILE PLACEHOLDER */}
+        <Route
+          path="/seller/profile"
+          element={
+            <ProtectedRoute role="ROLE_SELLER">
+              <SellerDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute role="ROLE_ADMIN">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN PROFILE PLACEHOLDER */}
+        <Route
+          path="/admin/profile"
+          element={
+            <ProtectedRoute role="ROLE_ADMIN">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* FALLBACK */}
         <Route path="*" element={<Navigate to="/" />} />
 
       </Routes>

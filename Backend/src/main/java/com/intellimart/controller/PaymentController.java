@@ -1,16 +1,15 @@
 package com.intellimart.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import com.intellimart.dto.ApiResponse; // Added for consistent response
 import com.intellimart.dto.PaymentDto;
 import com.intellimart.repos.SellerRepo;
 import com.intellimart.service.PaymentServiceInterface;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -23,36 +22,37 @@ public class PaymentController {
 
     // ================= RAZORPAY =================
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @PostMapping("/razorpay/{orderId}")
     public ResponseEntity<PaymentDto> create(@PathVariable Long orderId) {
-
+        // Happy path only; exceptions are handled by GlobalExceptionHandler
         return ResponseEntity.ok(paymentService.createRazorpayOrder(orderId));
     }
 
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @PostMapping("/verify")
-    public ResponseEntity<PaymentDto> verify(
+    public ResponseEntity<ApiResponse> verify(
             @RequestParam Long paymentId,
             @RequestParam String razorpayPaymentId,
             @RequestParam String razorpayOrderId,
             @RequestParam String signature) {
-
-        return ResponseEntity.ok(
-                paymentService.verifyPayment(
-                        paymentId,
-                        razorpayPaymentId,
-                        razorpayOrderId,
-                        signature
-                )
+        
+        // Verify logic moved to service; returns standardized ApiResponse
+        paymentService.verifyPayment(
+                paymentId,
+                razorpayPaymentId,
+                razorpayOrderId,
+                signature
         );
+        return ResponseEntity.ok(new ApiResponse(true, "Payment Verified Successfully"));
     }
 
     // ================= CUSTOMER =================
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @GetMapping("/customer")
     public ResponseEntity<List<PaymentDto>> customer(Authentication auth) {
-
+        // auth.getName() gets the email from your JWT
         return ResponseEntity.ok(
                 paymentService.getCustomerPaymentsByEmail(auth.getName())
         );
@@ -60,13 +60,12 @@ public class PaymentController {
 
     // ================= SELLER =================
 
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasAuthority('ROLE_SELLER')")
     @GetMapping("/seller")
     public ResponseEntity<List<PaymentDto>> seller(Authentication auth) {
-
-        Long sellerId =
-                sellerRepo.findByUser_Email(auth.getName())
-                        .orElseThrow()
+        // Optimized seller lookup
+        Long sellerId = sellerRepo.findByUser_Email(auth.getName())
+                        .orElseThrow(() -> new RuntimeException("Seller not found"))
                         .getId();
 
         return ResponseEntity.ok(paymentService.getSellerPayments(sellerId));
@@ -74,10 +73,9 @@ public class PaymentController {
 
     // ================= ADMIN =================
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<List<PaymentDto>> all() {
-
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 }

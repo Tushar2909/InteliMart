@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
 
 export default function Products() {
-
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -15,25 +14,28 @@ export default function Products() {
 
   return (
     <div className="bg-gray-50 min-h-screen px-14 py-12">
-
       <h1 className="text-3xl font-semibold mb-10">Products</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
 
         {products.map(p => (
 
           <div
             key={p.id}
-            className="bg-white rounded-2xl border shadow hover:shadow-xl transition transform hover:-translate-y-1"
+            className="bg-white rounded-2xl border shadow
+                       hover:shadow-xl hover:-translate-y-1
+                       transition-all duration-300"
           >
 
             <div
               onClick={() => navigate(`/product/${p.id}`)}
-              className="cursor-pointer"
+              className="cursor-pointer overflow-hidden rounded-t-2xl"
             >
               <img
-                src="https://via.placeholder.com/400x420"
-                className="w-full h-[260px] object-cover rounded-t-2xl hover:scale-105 transition"
+                src={p.imageUrl || "https://via.placeholder.com/400x350"}
+                alt={p.name}
+                className="w-full h-[240px] object-cover
+                           hover:scale-110 transition-transform duration-300"
               />
             </div>
 
@@ -41,7 +43,7 @@ export default function Products() {
 
               <h2
                 onClick={() => navigate(`/product/${p.id}`)}
-                className="font-medium cursor-pointer hover:text-indigo-600"
+                className="font-medium text-lg cursor-pointer hover:text-indigo-600"
               >
                 {p.name}
               </h2>
@@ -49,11 +51,12 @@ export default function Products() {
               <p className="text-gray-500 mt-1">₹{p.price}</p>
 
               <button
-                onClick={() => {
-                  addToCart(p);
-                  alert("Added to cart");
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addToCart(p.id, 1);
                 }}
-                className="mt-5 w-full py-2 rounded-lg border hover:bg-black hover:text-white transition"
+                className="mt-5 w-full py-2 rounded-lg border font-medium
+                           hover:bg-black hover:text-white transition"
               >
                 Add to Cart
               </button>
@@ -61,6 +64,7 @@ export default function Products() {
             </div>
 
           </div>
+
         ))}
 
       </div>

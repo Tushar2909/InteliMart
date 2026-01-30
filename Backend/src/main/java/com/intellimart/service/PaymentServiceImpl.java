@@ -1,18 +1,23 @@
 package com.intellimart.service;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.intellimart.dto.PaymentDto;
-import com.intellimart.entities.*;
+import com.intellimart.entities.Orders;
+import com.intellimart.entities.Payment;
+import com.intellimart.entities.PaymentStatus;
+import com.intellimart.entities.Status;
 import com.intellimart.repos.CustomerRepo;
 import com.intellimart.repos.OrderRepo;
 import com.intellimart.repos.PaymentRepo;
+import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.Utils;
 
@@ -26,101 +31,105 @@ public class PaymentServiceImpl implements PaymentServiceInterface {
     private final PaymentRepo paymentRepo;
     private final OrderRepo orderRepo;
     private final CustomerRepo customerRepo;
-    private final RazorpayClient razorpayClient;
 
-    @Value("${razorpay.secret}")
-    private String razorpaySecret;
+    private final String KEY_ID = "rzp_test_S88JK7IccT0yYB";
+    private final String KEY_SECRET = "YOUR_RAZORPAY_SECRET";
 
     @Override
     public PaymentDto createRazorpayOrder(Long orderId) {
 
-        Orders order = orderRepo.findById(orderId).orElseThrow();
+        Orders order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + orderId));
 
         try {
+            RazorpayClient razorpay = new RazorpayClient(KEY_ID, KEY_SECRET);
 
-            JSONObject req = new JSONObject();
-            req.put("amount", order.getTotalAmount().multiply(new java.math.BigDecimal(100)));
-            req.put("currency", "INR");
-            req.put("receipt", "order_" + orderId);
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", order.getTotalAmount().multiply(new BigDecimal(100)).intValue());
+            orderRequest.put("currency", "INR");
+            orderRequest.put("receipt", "txn_" + order.getOrderId());
 
-            var razorOrder = razorpayClient.orders.create(req);
+            Order rzpOrder = razorpay.orders.create(orderRequest);
 
-            Payment p = new Payment();
-            p.setOrder(order);
-            p.setAmount(order.getTotalAmount());
-            p.setStatus(PaymentStatus.PENDING);
-            p.setRazorpayOrderId(razorOrder.get("id"));
-            p.setCreatedAt(LocalDateTime.now());
+            Payment payment = new Payment();
+            payment.setOrder(order);
+            payment.setRazorpayOrderId(rzpOrder.get("id"));
+            payment.setAmount(order.getTotalAmount());
+            payment.setPaymentStatus(PaymentStatus.PENDING);
 
-            return toDto(paymentRepo.save(p));
-
+            return toDto(paymentRepo.save(payment));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Razorpay Order creation failed: " + e.getMessage());
         }
     }
 
     @Override
-    public PaymentDto verifyPayment(Long paymentId,
-                                    String razorpayPaymentId,
-                                    String razorpayOrderId,
-                                    String signature) {
-
-        Payment p = paymentRepo.findById(paymentId).orElseThrow();
+    public PaymentDto verifyPayment(Long paymentId, String razorpayPaymentId, String razorpayOrderId, String signature) {
 
         try {
+            JSONObject options = new JSONObject();
+            options.put("razorpay_order_id", razorpayOrderId);
+            options.put("razorpay_payment_id", razorpayPaymentId);
+            options.put("razorpay_signature", signature);
 
-            Utils.verifySignature(
-                    razorpayOrderId + "|" + razorpayPaymentId,
-                    signature,
-                    razorpaySecret);
+            boolean isValid = Utils.verifyPaymentSignature(options, KEY_SECRET);
 
-            p.setRazorpayPaymentId(razorpayPaymentId);
-            p.setStatus(PaymentStatus.SUCCESS);
-            p.setPaymentTime(LocalDateTime.now());
+            if (!isValid) throw new RuntimeException("Invalid Payment Signature");
 
-            return toDto(paymentRepo.save(p));
+            Payment payment = paymentRepo.findById(paymentId).orElseThrow();
+
+            payment.setPaymentStatus(PaymentStatus.SUCCESS);
+            payment.setRazorpayPaymentId(razorpayPaymentId);
+
+            Orders order = payment.getOrder();
+            order.setStatus(Status.CONFIRMED);
+            orderRepo.save(order);
+
+            return toDto(paymentRepo.save(payment));
 
         } catch (Exception e) {
-            throw new RuntimeException("Verification failed");
+            throw new RuntimeException("Payment Verification Failed");
         }
+    }
+
+    @Override
+    public List<PaymentDto> getCustomerPayments(Long userId) {
+        return paymentRepo.findByOrder_Customer_User_Id(userId)
+                .stream().map(this::toDto).collect(Collectors.toList());
     }
 
     @Override
     public List<PaymentDto> getCustomerPaymentsByEmail(String email) {
-
-        Long cid =
-                customerRepo.findByUser_Email(email)
-                        .orElseThrow()
-                        .getId();
-
-        return paymentRepo.findByOrder_Customer_Id(cid)
-                .stream().map(this::toDto).toList();
+        return paymentRepo.findByOrder_Customer_User_Email(email)
+                .stream().map(this::toDto).collect(Collectors.toList());
     }
 
     @Override
     public List<PaymentDto> getSellerPayments(Long sellerId) {
-
-        return paymentRepo.findByOrder_LineItems_Product_Seller_Id(sellerId)
-                .stream().map(this::toDto).toList();
+        return paymentRepo.findPaymentsBySeller(sellerId)
+                .stream().map(this::toDto).collect(Collectors.toList());
     }
 
     @Override
     public List<PaymentDto> getAllPayments() {
-
-        return paymentRepo.findAll().stream().map(this::toDto).toList();
+        return paymentRepo.findAll().stream().map(this::toDto).collect(Collectors.toList());
     }
 
     private PaymentDto toDto(Payment p) {
 
         PaymentDto dto = new PaymentDto();
-
         dto.setId(p.getId());
-        dto.setAmount(p.getAmount());
-        dto.setStatus(p.getStatus());
         dto.setOrderId(p.getOrder().getOrderId());
+        dto.setAmount(p.getAmount());
+
+        // ✅ NULL SAFE (fixes your crash)
+        if (p.getPaymentStatus() != null)
+            dto.setPaymentStatus(p.getPaymentStatus().name());
+        else
+            dto.setPaymentStatus("PENDING");
+
         dto.setRazorpayOrderId(p.getRazorpayOrderId());
         dto.setRazorpayPaymentId(p.getRazorpayPaymentId());
-
         return dto;
     }
 }

@@ -13,4 +13,6 @@ public interface AddressServiceInterface {
 
     List<AddressDto> getCustomerAddressesByEmail(String email);
 
+	String deleteAddress(Long addressId);
+
 }

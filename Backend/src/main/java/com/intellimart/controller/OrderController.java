@@ -3,6 +3,7 @@ package com.intellimart.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,34 +21,52 @@ public class OrderController {
 
     private final OrderServiceInterface orderService;
 
-    @PostMapping("/place/{customerId}")
-    public ResponseEntity<OrderDto> place(@PathVariable Long customerId) {
+    /**
+     * ✅ PLACE ORDER WITH ADDRESS
+     * Matches Frontend: api.post(`/api/orders/place/${user.id}`, null, { params: { addressId } })
+     * userId will be 120, which the Service will map to Customer 207
+     */
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @PostMapping("/place/{userId}")
+    public ResponseEntity<OrderDto> place(
+            @PathVariable Long userId,
+            @RequestParam Long addressId) {
 
-        return ResponseEntity.ok(orderService.placeOrder(customerId));
+        return ResponseEntity.ok(
+                orderService.placeOrder(userId, addressId)
+        );
     }
 
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @GetMapping("/customer")
     public ResponseEntity<List<OrderDto>> customer(Authentication auth) {
-
-        return ResponseEntity.ok(orderService.getCustomerOrdersByEmail(auth.getName()));
+        return ResponseEntity.ok(
+                orderService.getCustomerOrdersByEmail(auth.getName())
+        );
     }
 
-    @GetMapping("/seller/{sellerId}")
-    public ResponseEntity<List<SellerOrderDto>> seller(@PathVariable Long sellerId) {
-
-        return ResponseEntity.ok(orderService.getSellerOrders(sellerId));
+    @PreAuthorize("hasAuthority('ROLE_SELLER')")
+    @GetMapping("/seller")
+    public ResponseEntity<List<SellerOrderDto>> seller(Authentication auth) {
+        return ResponseEntity.ok(
+                orderService.getSellerOrdersByAuth(auth)
+        );
     }
 
-    @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/admin")
     public ResponseEntity<List<OrderDto>> all() {
-
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_SELLER')")
     @PutMapping("/{orderId}/status/{status}")
-    public ResponseEntity<OrderDto> update(@PathVariable Long orderId,
-                                          @PathVariable Status status) {
+    public ResponseEntity<OrderDto> update(
+            @PathVariable Long orderId,
+            @PathVariable Status status) {
 
-        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, status));
+        return ResponseEntity.ok(
+                orderService.updateOrderStatus(orderId, status)
+        );
     }
 }

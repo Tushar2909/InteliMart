@@ -1,92 +1,144 @@
 import { useCart } from "../cart/CartContext";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Cart() {
-
   const { cart, removeFromCart, changeQty, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
 
-  const total = cart.reduce((a, b) => a + b.price * b.qty, 0);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const checkout = async () => {
+  const [newAddress, setNewAddress] = useState({
+    zipcode: "",
+    state: "",
+    city: "",
+    street: "",
+    detailAddress: ""
+  });
 
-    if (cart.length === 0) return;
+  const total = cart.reduce(
+    (sum, p) => sum + Number(p.productPrice) * Number(p.quantity),
+    0
+  );
 
-    setLoading(true);
+  useEffect(() => {
+    if (user?.id) loadAddresses();
+  }, [user?.id]);
 
-    try {
+  const loadAddresses = async () => {
+    const res = await api.get(`/api/addresses/customer/${user.id}`);
+    setAddresses(res.data || []);
+    if (res.data?.length) setSelectedAddress(res.data[0].aid);
+  };
 
-      const payload = {
-        items: cart.map(p => ({
-          productId: p.id,
-          quantity: p.qty
-        }))
-      };
+  const addAddress = async () => {
+    await api.post(`/api/addresses/customer/${user.id}`, {
+      ...newAddress,
+      customerId: user.id
+    });
+    loadAddresses();
+  };
 
-      await api.post("/api/orders", payload);
+  const payNow = async () => {
+    if (!cart.length) return alert("Cart empty");
+    if (!selectedAddress) return alert("Select address");
 
-      clearCart();
+    const orderRes = await api.post(
+      `/api/orders/place/${user.id}`,
+      null,
+      { params: { addressId: selectedAddress } }
+    );
 
-      alert("Order placed successfully!");
+    const orderId = orderRes.data.orderId;
 
-      navigate("/customer");
+    const payRes = await api.post(`/api/payments/razorpay/${orderId}`);
+    const payment = payRes.data;
 
-    } catch (err) {
-      console.error(err);
-      alert("Checkout failed");
-    } finally {
-      setLoading(false);
-    }
+    new window.Razorpay({
+      key: "rzp_test_S88JK7IccT0yYB",
+      amount: Number(payment.amount) * 100,
+      currency: "INR",
+      order_id: payment.razorpayOrderId,
+
+      handler: async (r) => {
+        await api.post(`/api/payments/verify`, null, {
+          params: {
+            paymentId: payment.id,
+            razorpayPaymentId: r.razorpay_payment_id,
+            razorpayOrderId: r.razorpay_order_id,
+            signature: r.razorpay_signature
+          }
+        });
+
+        await clearCart();
+        navigate("/customer");
+      }
+    }).open();
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen p-12">
+    <div className="p-10">
 
-      <h1 className="text-3xl font-semibold mb-10">Your Cart</h1>
-
-      {cart.length === 0 && <p>Your cart is empty.</p>}
+      <h1 className="text-2xl mb-6">Cart</h1>
 
       {cart.map(p => (
-        <div key={p.id} className="bg-white p-6 mb-4 rounded-xl shadow flex justify-between">
+        <div key={p.cartItemId} className="border p-4 mb-3 rounded">
 
-          <div>
-            <h2 className="font-medium">{p.name}</h2>
-            <p className="text-gray-500">₹{p.price}</p>
+          <b>{p.productName}</b> – ₹{p.productPrice}
 
-            <input
-              type="number"
-              min="1"
-              value={p.qty}
-              onChange={e => changeQty(p.id, Number(e.target.value))}
-              className="border w-16 mt-2"
-            />
-          </div>
+          <input
+            type="number"
+            min="1"
+            value={p.quantity}
+            className="border ml-4 w-16 text-center"
+            onChange={e => changeQty(p.cartItemId, Number(e.target.value))}
+          />
 
-          <button onClick={() => removeFromCart(p.id)} className="text-red-500">
+          <button
+            className="ml-4 text-red-600"
+            onClick={() => removeFromCart(p.cartItemId)}
+          >
             Remove
           </button>
 
         </div>
       ))}
 
-      {cart.length > 0 && (
-        <div className="bg-white p-6 mt-6 rounded-xl shadow flex justify-between items-center">
+      <h2 className="mt-4 font-semibold">Total: ₹{total}</h2>
 
-          <h2 className="text-xl">Total: ₹{total}</h2>
+      <h3 className="mt-6">Address</h3>
 
-          <button
-            disabled={loading}
-            onClick={checkout}
-            className="bg-black text-white px-8 py-3 rounded hover:bg-gray-800"
-          >
-            {loading ? "Placing order..." : "Checkout"}
-          </button>
-
+      {addresses.map(a => (
+        <div key={a.aid}>
+          <input
+            type="radio"
+            checked={selectedAddress === a.aid}
+            onChange={() => setSelectedAddress(a.aid)}
+          />
+          {a.street}
         </div>
-      )}
+      ))}
+
+      <input
+        className="border mt-3 p-2"
+        placeholder="Zip"
+        value={newAddress.zipcode}
+        onChange={e => setNewAddress({ ...newAddress, zipcode: e.target.value })}
+      />
+
+      <button className="ml-3 border px-4 py-2" onClick={addAddress}>
+        Add Address
+      </button>
+
+      <br /><br />
+
+      <button className="border px-6 py-2" onClick={payNow}>
+        Checkout
+      </button>
 
     </div>
   );

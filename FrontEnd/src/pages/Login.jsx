@@ -4,7 +4,6 @@ import api from "../api/axios";
 import { useAuth } from "../auth/AuthContext";
 
 export default function Login() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,73 +18,104 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // 1. Send credentials to backend
       const res = await api.post("/api/auth/login", { email, password });
 
+      // 2. Save complete response (token, role, userId) to AuthContext
+      // This fix ensures user.id is available globally for your Cart/Address logic
       login(res.data);
 
       const role = res.data.role;
 
-      if (role === "ROLE_ADMIN") navigate("/admin");
-      else if (role === "ROLE_SELLER") navigate("/seller");
-      else navigate("/customer");
+      // 3. Redirect logic based on user role
+      if (role === "ROLE_ADMIN") {
+        navigate("/admin");
+      } else if (role === "ROLE_SELLER") {
+        navigate("/seller");
+      } else {
+        // Customers are redirected to Home to see products
+        navigate("/"); 
+      }
 
-    } catch {
-      setError("Invalid email or password");
+    } catch (err) {
+      console.error("Login Failed:", err);
+      setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
-
-      <form onSubmit={submit} className="bg-white w-[380px] p-10 rounded-xl shadow-xl">
-
-        <h2 className="text-3xl font-bold text-center mb-6">
-          IntelliMart Login
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600 p-4">
+      <form 
+        onSubmit={submit} 
+        className="bg-white w-full max-w-[400px] p-10 rounded-2xl shadow-2xl transition-all"
+      >
+        <h2 className="text-3xl font-extrabold text-center mb-2 text-gray-800">
+          IntelliMart
         </h2>
+        <p className="text-center text-gray-500 mb-8 text-sm">
+          Please enter your details to sign in
+        </p>
 
         {error && (
-          <p className="text-red-500 text-center mb-3">{error}</p>
+          <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-6 text-center border border-red-100">
+            {error}
+          </div>
         )}
 
-        <input
-          className="w-full border px-3 py-2 rounded mb-4"
-          placeholder="Email"
-          required
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              placeholder="name@example.com"
+              required
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-        <input
-          type="password"
-          className="w-full border px-3 py-2 rounded mb-2"
-          placeholder="Password"
-          required
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">
+              Password
+            </label>
+            <input
+              type="password"
+              className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+              placeholder="••••••••"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </div>
 
         <div
-          className="text-right text-sm text-blue-600 mb-4 cursor-pointer hover:underline"
-          onClick={() => alert("Password reset coming soon")}
+          className="text-right text-sm text-indigo-600 mt-3 mb-6 cursor-pointer hover:underline font-medium"
+          onClick={() => alert("Password reset is coming soon!")}
         >
           Forgot password?
         </div>
 
         <button
           disabled={loading}
-          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+          className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all ${
+            loading 
+              ? "bg-gray-400 cursor-not-allowed" 
+              : "bg-black hover:bg-gray-800 active:scale-95"
+          }`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "AUTHENTICATING..." : "SIGN IN"}
         </button>
 
-        {/* SIGNUP LINK */}
-        <p className="text-center mt-4 text-sm">
+        <p className="text-center mt-8 text-sm text-gray-600">
           Don’t have an account?{" "}
-          <Link to="/signup" className="text-indigo-600 font-medium hover:underline">
-            Sign up
+          <Link to="/signup" className="text-indigo-600 font-bold hover:underline">
+            Create an account
           </Link>
         </p>
-
       </form>
     </div>
   );

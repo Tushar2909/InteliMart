@@ -1,35 +1,41 @@
-import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    // Pull individual keys to rebuild the user state on page refresh
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const userId = localStorage.getItem("userId");
+    
+    if (token && userId) {
+      setUser({ token, role, id: userId });
+    }
+  }, []);
 
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [role, setRole] = useState(localStorage.getItem("role"));
-
-  const login = ({ token, role }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("role", role);
-    setToken(token);
-    setRole(role);
-
-    if (role === "ROLE_ADMIN") navigate("/admin");
-    else if (role === "ROLE_SELLER") navigate("/seller");
-    else navigate("/");
+  const login = (resData) => {
+    // resData comes from SigninResponse: { token, message, role, userId }
+    localStorage.setItem("token", resData.token);
+    localStorage.setItem("role", resData.role);
+    localStorage.setItem("userId", resData.userId); // Persistence for ID
+    
+    setUser({ 
+      token: resData.token, 
+      role: resData.role, 
+      id: resData.userId 
+    });
   };
 
   const logout = () => {
     localStorage.clear();
-    setToken(null);
-    setRole(null);
-    navigate("/login");
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, role, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

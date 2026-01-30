@@ -1,12 +1,15 @@
 package com.intellimart.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
 import com.intellimart.dto.ProductDto;
 import com.intellimart.entities.Product;
 import com.intellimart.entities.ProductCategory;
@@ -17,166 +20,166 @@ import com.intellimart.repos.SellerRepo;
 import com.intellimart.repos.UserRepo;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+//(unchanged imports)
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class ProductServiceImpl implements ProductServiceInterface {
 
-    private final ProductRepo productRepo;
-    private final SellerRepo sellerRepo;
-    private final UserRepo userRepo;
+ private final ProductRepo productRepo;
+ private final SellerRepo sellerRepo;
+ private final UserRepo userRepo;
+ private final Cloudinary cloudinary;
 
-    @Override
-    public List<ProductDto> getAllProducts(int page, int size) {
+ @Override
+ public List<ProductDto> getAllProducts(int page, int size) {
+     return productRepo.findAllByIsDeletedFalse(PageRequest.of(page, size))
+             .getContent().stream().map(this::toDto).toList();
+ }
 
-        return productRepo.findAllByIsDeletedFalse(PageRequest.of(page, size))
-                .getContent()
-                .stream()
-                .map(this::toDto)
-                .toList();
-    }
+ @Override
+ public List<ProductDto> getProductsByCategory(ProductCategory category) {
+     return productRepo.findByPcategoryAndIsDeletedFalse(category)
+             .stream().map(this::toDto).toList();
+ }
 
-    @Override
-    public ProductDto getProductById(Long id) {
+ @Override
+ public ProductDto getProductById(Long id) {
+     Product product = productRepo.findByIdAndIsDeletedFalse(id)
+             .orElseThrow(() -> new RuntimeException("Product not found"));
+     return toDto(product);
+ }
 
-        Product product = productRepo.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+ // ================= SELLER =================
 
-        return toDto(product);
-    }
+ @Override
+ public ProductDto addProduct(Authentication auth, ProductDto dto, MultipartFile image) {
 
-    // ================= CREATE =================
+     Seller seller = getSellerFromAuth(auth);
+     String imageUrl = uploadToCloudinary(image);
 
-    @Override
-    public ProductDto addProduct(Authentication auth, ProductDto dto) {
+     Product p = new Product();
+     p.setName(dto.getName());
+     p.setPcategory(ProductCategory.valueOf(dto.getPcategory()));
+     p.setPrice(dto.getPrice());
+     p.setUnitsAvailable(dto.getUnitsAvailable());
+     p.setDescription(dto.getDescription());
+     p.setSeller(seller);
+     p.setDeleted(false);
+     p.setImageUrl(imageUrl);
 
-        Seller seller = getSellerFromAuth(auth);
+     return toDto(productRepo.save(p));
+ }
 
-        Product p = new Product();
-        p.setName(dto.getName());
-        p.setPcategory(dto.getPcategory());
-        p.setPrice(dto.getPrice());
-        p.setUnitsAvailable(dto.getUnitsAvailable());
-        p.setImageUrl(dto.getImageUrl());
-        p.setDescription(dto.getDescription());
-        p.setSeller(seller);
-        p.setDeleted(false);
+ @Override
+ public ProductDto updateProduct(Authentication auth, Long id, ProductDto dto, MultipartFile image) {
 
-        Product saved = productRepo.save(p);
+     Product p = productRepo.findByIdAndIsDeletedFalse(id)
+             .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        log.info("Product created {}", saved.getId());
+     validateOwnership(auth, p);
 
-        return toDto(saved);
-    }
+     p.setName(dto.getName());
+     p.setPcategory(ProductCategory.valueOf(dto.getPcategory()));
+     p.setPrice(dto.getPrice());
+     p.setUnitsAvailable(dto.getUnitsAvailable());
+     p.setDescription(dto.getDescription());
 
-    // ================= UPDATE =================
+     if (image != null && !image.isEmpty())
+         p.setImageUrl(uploadToCloudinary(image));
 
-    @Override
-    public ProductDto updateProduct(Authentication auth, Long id, ProductDto dto) {
+     return toDto(productRepo.save(p));
+ }
 
-        Product p = productRepo.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+ @Override
+ public String deleteProduct(Authentication auth, Long id) {
 
-        validateOwnership(auth, p);
+     Product p = productRepo.findByIdAndIsDeletedFalse(id)
+             .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        p.setName(dto.getName());
-        p.setPcategory(dto.getPcategory());
-        p.setPrice(dto.getPrice());
-        p.setUnitsAvailable(dto.getUnitsAvailable());
-        p.setImageUrl(dto.getImageUrl());
-        p.setDescription(dto.getDescription());
+     validateOwnership(auth, p);
+     p.setDeleted(true);
+     productRepo.save(p);
+     return "Product deleted";
+ }
 
-        return toDto(productRepo.save(p));
-    }
+ @Override
+ public List<ProductDto> getSellerProducts(Authentication auth) {
 
-    // ================= DELETE =================
+     Seller seller = getSellerFromAuth(auth);
 
-    @Override
-    public String deleteProduct(Authentication auth, Long id) {
+     return productRepo.findBySeller_IdAndIsDeletedFalse(seller.getId())
+             .stream().map(this::toDto).toList();
+ }
 
-        Product p = productRepo.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+ // ================= ADMIN =================
 
-        validateOwnership(auth, p);
+ @Override
+ public ProductDto updateProductByAdmin(Long id, ProductDto dto) {
 
-        p.setDeleted(true);
-        productRepo.save(p);
+     Product p = productRepo.findById(id)
+             .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        return "Product deleted successfully";
-    }
+     p.setName(dto.getName());
+     p.setPcategory(ProductCategory.valueOf(dto.getPcategory()));
+     p.setPrice(dto.getPrice());
+     p.setUnitsAvailable(dto.getUnitsAvailable());
+     p.setDescription(dto.getDescription());
 
-    // ================= CATEGORY =================
+     return toDto(productRepo.save(p));
+ }
 
-    @Override
-    public List<ProductDto> getProductsByCategory(ProductCategory category) {
+ @Override
+ public String deleteProductByAdmin(Long id) {
 
-        return productRepo.findByPcategoryAndIsDeletedFalse(category)
-                .stream()
-                .map(this::toDto)
-                .toList();
-    }
+     Product p = productRepo.findById(id)
+             .orElseThrow(() -> new RuntimeException("Product not found"));
 
-    // ================= SELLER INVENTORY =================
+     p.setDeleted(true);
+     productRepo.save(p);
+     return "Product deleted by admin";
+ }
 
-    @Override
-    public List<ProductDto> getSellerProducts(Authentication auth) {
+ // ================= HELPERS =================
 
-        Seller seller = getSellerFromAuth(auth);
+ private String uploadToCloudinary(MultipartFile file) {
+     try {
+         Map<?, ?> res = cloudinary.uploader().upload(file.getBytes(), Map.of());
+         return res.get("secure_url").toString();
+     } catch (Exception e) {
+         throw new RuntimeException("Image upload failed");
+     }
+ }
 
-        return productRepo.findBySeller_IdAndIsDeletedFalse(seller.getId())
-                .stream()
-                .map(this::toDto)
-                .toList();
-    }
+ private Seller getSellerFromAuth(Authentication auth) {
+     User user = userRepo.findByEmailAndIsDeletedFalse(auth.getName()).orElseThrow();
+     return sellerRepo.findByUser_Id(user.getId()).orElseThrow();
+ }
 
-    // ================= HELPERS =================
+ private void validateOwnership(Authentication auth, Product p) {
 
-    private Seller getSellerFromAuth(Authentication auth) {
+     if (auth.getAuthorities().stream()
+             .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) return;
 
-        String email = auth.getName();
+     Seller seller = getSellerFromAuth(auth);
 
-        User user = userRepo.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+     if (!p.getSeller().getId().equals(seller.getId()))
+         throw new RuntimeException("Not your product");
+ }
 
-        return sellerRepo.findByUser_Id(user.getId())
-                .orElseThrow(() -> new RuntimeException("Seller not found"));
-    }
+ private ProductDto toDto(Product p) {
 
-    private void validateOwnership(Authentication auth, Product p) {
-
-        // ADMIN bypass
-        if (auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-            return;
-        }
-
-        Seller seller = getSellerFromAuth(auth);
-
-        if (p.getSeller() == null || !p.getSeller().getId().equals(seller.getId())) {
-            throw new RuntimeException("You cannot modify another seller's product");
-        }
-    }
-
-    // ✅ NULL SAFE DTO
-    private ProductDto toDto(Product p) {
-
-        ProductDto dto = new ProductDto();
-
-        dto.setId(p.getId());
-        dto.setName(p.getName());
-        dto.setPcategory(p.getPcategory());
-        dto.setPrice(p.getPrice());
-        dto.setUnitsAvailable(p.getUnitsAvailable());
-        dto.setImageUrl(p.getImageUrl());
-        dto.setDescription(p.getDescription());
-
-        if (p.getSeller() != null) {
-            dto.setSellerId(p.getSeller().getId());
-        }
-
-        return dto;
-    }
+     ProductDto dto = new ProductDto();
+     dto.setId(p.getId());
+     dto.setName(p.getName());
+     dto.setPcategory(p.getPcategory().name());
+     dto.setPrice(p.getPrice());
+     dto.setUnitsAvailable(p.getUnitsAvailable());
+     dto.setImageUrl(p.getImageUrl());
+     dto.setDescription(p.getDescription());
+     dto.setSellerId(p.getSeller() != null ? p.getSeller().getId() : null);
+     return dto;
+ }
 }
