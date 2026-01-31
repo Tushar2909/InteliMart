@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intellimart.dto.*;
 import com.intellimart.entities.Status;
 import com.intellimart.service.*;
@@ -29,12 +31,19 @@ public class AdminController {
         return ResponseEntity.ok(productService.getAllProducts(0, 500));
     }
 
-    // ✅ FIXED: Standardized admin product update path
-    @PutMapping("/products/{id}")
+    // ✅ FIXED: Supports Multipart for Image Choosing
+    @PutMapping(value = "/products/{id}", consumes = "multipart/form-data")
     public ResponseEntity<ProductDto> updateProductByAdmin(
             @PathVariable Long id,
-            @RequestBody ProductDto dto) {
-        return ResponseEntity.ok(productService.updateProductByAdmin(id, dto));
+            @RequestPart("data") String productDtoJson,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ProductDto dto = mapper.readValue(productDtoJson, ProductDto.class);
+            return ResponseEntity.ok(productService.updateProductByAdmin(id, dto, image));
+        } catch (Exception e) {
+            throw new RuntimeException("Asset sync failed: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/products/{id}")
@@ -71,7 +80,7 @@ public class AdminController {
         return ResponseEntity.ok(customerService.getallcustomers());
     }
 
-    // ✅ ADDED: Missing Customer Update Endpoint for Admin
+    // ✅ ADDED: Admin Customer Update Mapping
     @PutMapping("/customers/{id}")
     public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto dto) {
         try {
@@ -82,6 +91,12 @@ public class AdminController {
         }
     }
 
+    // ✅ ADDED: Admin Customer Delete Mapping
+    @DeleteMapping("/customers/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse(true, customerService.deletecustomer(id)));
+    }
+
     // ================= ORDERS =================
 
     @GetMapping("/orders")
@@ -89,8 +104,16 @@ public class AdminController {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
 
+    // ✅ ADDED: Admin Order Trace Mapping
+    @GetMapping("/orders/customer/{customerId}")
+    public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(orderService.getCustomerOrdersById(customerId));
+    }
+
     @PutMapping("/orders/{orderId}/status")
-    public ResponseEntity<?> updateStatus(@PathVariable Long orderId, @RequestParam String status) {
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Long orderId,
+            @RequestParam String status) {
         try {
             String normalized = status.trim().replace(" ", "").toUpperCase();
             Status st = Status.valueOf(normalized);

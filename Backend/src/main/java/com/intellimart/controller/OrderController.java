@@ -41,14 +41,14 @@ public class OrderController {
      * ✅ GET CUSTOMER SPECIFIC ORDERS (FOR ADMIN)
      * Matches Frontend: api.get(`/api/orders/customer/${id}`)
      * This allows an Admin to see orders for any customer by their ID.
-//     */
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-//    @GetMapping("/customer/{customerId}")
-//    public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable Long customerId) {
-//        return ResponseEntity.ok(
-//                orderService.getCustomerOrdersById(customerId)
-//        );
-//    }
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable Long customerId) {
+        return ResponseEntity.ok(
+                orderService.getCustomerOrdersById(customerId)
+        );
+    }
 
     @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
     @GetMapping("/customer")

@@ -10,9 +10,15 @@ import com.intellimart.entities.Status;
 
 public interface OrderServiceInterface {
 
+    // ===== OLD (keep) =====
     OrderDto placeOrder(Long customerId, Long addressId);
 
+    // ===== NEW (JWT) =====
+    OrderDto placeOrder(Authentication auth, Long addressId);
+
     List<OrderDto> getCustomerOrdersByEmail(String email);
+
+    List<OrderDto> getCustomerOrdersById(Long customerId);
 
     OrderDto getOrderById(Long orderId);
 
@@ -23,5 +29,4 @@ public interface OrderServiceInterface {
     List<SellerOrderDto> getSellerOrders(Long sellerId);
 
     List<SellerOrderDto> getSellerOrdersByAuth(Authentication auth);
-//    List<OrderDto> getCustomerOrdersById(Long customerId);
 }

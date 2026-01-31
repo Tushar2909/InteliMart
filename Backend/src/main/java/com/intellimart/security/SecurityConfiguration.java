@@ -38,24 +38,26 @@ public class SecurityConfiguration {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
 
+                // PUBLIC
                 .requestMatchers("/api/auth/**","/swagger-ui/**","/v3/api-docs/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/api/products/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 
-                // ADMIN FIRST
-                .requestMatchers("/api/admin/**","/api/products/**","/api/orders/**","/api/payments/**",
-                        "/api/customers/**","/api/customer/**","/api/address/**",
-                        "/api/addresses/**","/api/cart/**")
-                .hasAuthority("ROLE_ADMIN")
+                // ADMIN
+                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
                 // SELLER
-                .requestMatchers("/api/seller/**")
-                .hasAuthority("ROLE_SELLER")
+                .requestMatchers("/api/seller/**").hasAuthority("ROLE_SELLER")
 
                 // CUSTOMER
-                .requestMatchers("/api/customer/**","/api/address/**","/api/addresses/**",
-                        "/api/cart/**","/api/orders/**","/api/payments/**","/api/customers/me")
-                .hasAuthority("ROLE_CUSTOMER")
+                .requestMatchers(
+                        "/api/customer/**",
+                        "/api/cart/**",
+                        "/api/orders/**",
+                        "/api/payments/**",
+                        "/api/address/**",
+                        "/api/addresses/**"
+                ).hasAuthority("ROLE_CUSTOMER")
 
                 .anyRequest().authenticated()
             );
@@ -88,4 +90,3 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 }
-

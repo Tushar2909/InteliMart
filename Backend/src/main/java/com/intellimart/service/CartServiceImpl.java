@@ -3,8 +3,11 @@ package com.intellimart.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.intellimart.dto.CartItemDto;
 import com.intellimart.entities.CartItem;
 import com.intellimart.entities.Customer;
@@ -12,106 +15,173 @@ import com.intellimart.entities.Product;
 import com.intellimart.repos.CartRepo;
 import com.intellimart.repos.CustomerRepo;
 import com.intellimart.repos.ProductRepo;
-import lombok.AllArgsConstructor;
+import com.intellimart.security.UserPrincipal;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartServiceImpl implements CartServiceInterface {
 
     private final CartRepo cartRepo;
     private final ProductRepo productRepo;
     private final CustomerRepo customerRepo;
 
+    // ================= HELPERS =================
+
+    private Customer getCustomer(Authentication auth) {
+        UserPrincipal p = (UserPrincipal) auth.getPrincipal();
+        return customerRepo.findByUser_Id(p.getId()).orElseThrow();
+    }
+
+    // ================= OLD (userId based) =================
+
     @Override
     public String addItemToCart(Long userId, Long productId, int quantity) {
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero");
-        }
-
-        Customer customer = customerRepo.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found for User ID: " + userId));
-
-        Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found or unavailable"));
-
-        Optional<CartItem> existingItem = cartRepo.findByCustomerAndProductAndIsDeletedFalse(customer, product);
-        
-        if (existingItem.isPresent()) {
-            CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + quantity);
-            cartRepo.save(item);
-            return "Quantity updated in cart to " + item.getQuantity();
-        }
-
-        CartItem newItem = new CartItem();
-        newItem.setCustomer(customer);
-        newItem.setProduct(product);
-        newItem.setQuantity(quantity);
-        newItem.setDeleted(false);
-        cartRepo.save(newItem);
-        return "Item added to cart successfully";
+        Authentication fake = null;
+        return addItemToCart(fake, productId, quantity);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CartItemDto> getCartDtos(Long userId) {
-        Customer customer = customerRepo.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found"));
-
-        List<CartItem> items = cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId());
-        return items.stream().map(item -> {
-            Product product = item.getProduct();
-            return new CartItemDto(
-                item.getCartItemId(),
-                product.getId(),
-                product.getName(),
-                product.getPrice() != null ? product.getPrice().doubleValue() : 0.0,
-                product.getImageUrl(),
-                item.getQuantity()
-            );
-        }).collect(Collectors.toList());
+        Customer c = customerRepo.findByUser_Id(userId).orElseThrow();
+        return cartRepo.findByCustomer_IdAndIsDeletedFalse(c.getId())
+                .stream()
+                .map(i -> new CartItemDto(
+                        i.getCartItemId(),
+                        i.getProduct().getId(),
+                        i.getProduct().getName(),
+                        i.getProduct().getPrice().doubleValue(),
+                        i.getProduct().getImageUrl(),
+                        i.getQuantity()
+                )).collect(Collectors.toList());
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CartItem> getCartByCustomer(Long userId) {
-        Customer customer = customerRepo.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found"));
-        return cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId());
+        Customer c = customerRepo.findByUser_Id(userId).orElseThrow();
+        return cartRepo.findByCustomer_IdAndIsDeletedFalse(c.getId());
     }
 
     @Override
     public String clearCart(Long userId) {
-        Customer customer = customerRepo.findByUser_Id(userId)
-                .orElseThrow(() -> new RuntimeException("Customer profile not found"));
-        
-        List<CartItem> items = cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId());
-        items.forEach(item -> {
-            item.setDeleted(true);
-            cartRepo.save(item);
-        });
-        return "Cart cleared successfully. " + items.size() + " items removed.";
-    }
-
-    @Override
-    public String removeItemFromCart(Long cartItemId) {
-        CartItem item = cartRepo.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
-        item.setDeleted(true);
-        cartRepo.save(item);
-        return "Item removed from cart successfully";
+        Customer c = customerRepo.findByUser_Id(userId).orElseThrow();
+        cartRepo.findByCustomer_IdAndIsDeletedFalse(c.getId())
+                .forEach(i -> { i.setDeleted(true); cartRepo.save(i); });
+        return "Cleared";
     }
 
     @Override
     public String updateQuantity(Long cartItemId, int quantity) {
-        if (quantity <= 0) {
-            throw new RuntimeException("Quantity must be greater than zero");
+        CartItem i = cartRepo.findById(cartItemId).orElseThrow();
+        i.setQuantity(quantity);
+        cartRepo.save(i);
+        return "Updated";
+    }
+
+    @Override
+    public String removeItemFromCart(Long cartItemId) {
+        CartItem i = cartRepo.findById(cartItemId).orElseThrow();
+        i.setDeleted(true);
+        cartRepo.save(i);
+        return "Removed";
+    }
+
+    // ================= JWT BASED =================
+
+    @Override
+    public String addItemToCart(Authentication auth, Long productId, int quantity) {
+
+        if (quantity <= 0) throw new RuntimeException("Invalid quantity");
+
+        Customer customer = getCustomer(auth);
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Optional<CartItem> existing =
+                cartRepo.findByCustomerAndProductAndIsDeletedFalse(customer, product);
+
+        if (existing.isPresent()) {
+            CartItem item = existing.get();
+            item.setQuantity(item.getQuantity() + quantity);
+            cartRepo.save(item);
+            return "Updated";
         }
-        CartItem item = cartRepo.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        CartItem item = new CartItem();
+        item.setCustomer(customer);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setDeleted(false);
+
+        cartRepo.save(item);
+        return "Added";
+    }
+
+    @Override
+    public List<CartItemDto> getCartDtos(Authentication auth) {
+
+        Customer customer = getCustomer(auth);
+
+        return cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId())
+                .stream()
+                .map(i -> new CartItemDto(
+                        i.getCartItemId(),
+                        i.getProduct().getId(),
+                        i.getProduct().getName(),
+                        i.getProduct().getPrice().doubleValue(),
+                        i.getProduct().getImageUrl(),
+                        i.getQuantity()
+                )).collect(Collectors.toList());
+    }
+
+    @Override
+    public String removeItemFromCart(Authentication auth, Long cartItemId) {
+
+        Customer customer = getCustomer(auth);
+
+        CartItem item = cartRepo.findById(cartItemId).orElseThrow();
+
+        if (!item.getCustomer().getId().equals(customer.getId()))
+            throw new RuntimeException("Forbidden");
+
+        item.setDeleted(true);
+        cartRepo.save(item);
+
+        return "Removed";
+    }
+
+    @Override
+    public String updateQuantity(Authentication auth, Long cartItemId, int quantity) {
+
+        if (quantity <= 0) throw new RuntimeException("Invalid");
+
+        Customer customer = getCustomer(auth);
+
+        CartItem item = cartRepo.findById(cartItemId).orElseThrow();
+
+        if (!item.getCustomer().getId().equals(customer.getId()))
+            throw new RuntimeException("Forbidden");
+
         item.setQuantity(quantity);
         cartRepo.save(item);
-        return "Quantity updated successfully to " + quantity;
+
+        return "Updated";
+    }
+
+    @Override
+    public String clearCart(Authentication auth) {
+
+        Customer customer = getCustomer(auth);
+
+        cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId())
+                .forEach(i -> {
+                    i.setDeleted(true);
+                    cartRepo.save(i);
+                });
+
+        return "Cleared";
     }
 }

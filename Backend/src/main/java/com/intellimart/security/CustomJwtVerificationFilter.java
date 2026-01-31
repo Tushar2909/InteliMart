@@ -1,10 +1,8 @@
 package com.intellimart.security;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,57 +34,55 @@ public class CustomJwtVerificationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // ✅ Public endpoints
-        if (
-            path.equals("/api/auth/login")
-            || path.equals("/api/auth/signup/customer")
-            || path.startsWith("/swagger-ui")
-            || path.startsWith("/v3/api-docs")
-        ) {
+        if (path.startsWith("/api/auth")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            String authHeader = request.getHeader("Authorization");
+            String header = request.getHeader("Authorization");
 
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (header == null || !header.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            String jwt = authHeader.substring(7);
+            String token = header.substring(7);
 
-            Claims claims = jwtUtils.validateToken(jwt);
+            Claims claims = jwtUtils.validateToken(token);
 
             String userId = claims.get("user_id", String.class);
             String role = claims.get("user_role", String.class);
             String email = claims.getSubject();
 
-            // 🔥 THIS IS THE FIX
-            SimpleGrantedAuthority authority =
-                    new SimpleGrantedAuthority(role);
+            UserPrincipal principal = new UserPrincipal(userId, email, role);
 
-            UsernamePasswordAuthenticationToken authentication =
+            UsernamePasswordAuthenticationToken auth =
                     new UsernamePasswordAuthenticationToken(
-                            email,
+                            principal,
                             null,
-                            List.of(authority)
+                            principal.getAuthorities()
                     );
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            log.error("JWT Verification Failed", e);
 
+            log.error("JWT Failure", e);
             SecurityContextHolder.clearContext();
+
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
 
-            ApiResponse resp = new ApiResponse(false, "JWT Authentication Failed");
-            response.getWriter().write(objectMapper.writeValueAsString(resp));
+            response.getWriter().write(
+                    objectMapper.writeValueAsString(
+                            new ApiResponse(false,"JWT Authentication Failed")
+                    )
+            );
         }
     }
 }

@@ -22,4 +22,5 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     // ✅ SELLER PRODUCTS
     List<Product> findBySeller_IdAndIsDeletedFalse(Long sellerId);
+    List<Product> findByNameContainingIgnoreCaseAndIsDeletedFalse(String name);
 }
