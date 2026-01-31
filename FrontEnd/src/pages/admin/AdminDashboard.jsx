@@ -8,11 +8,13 @@ const BOX_ICON = "📦";
 const REVENUE_ICON = "💰";
 const USERS_ICON = "👥";
 const VENDOR_ICON = "🏢";
+const CARD_ICON = "💳";
 
 /** ✅ FIXED: Synchronized with backend Status.java enum */
 const STATUSES = ["CONFIRMED", "INTRANSIT", "DISPATCHED", "OUTFORDELIVERY", "DELIVERED", "PENDING"];
 const CATEGORIES = ["CLOTHING", "ACCESSORIES", "SHOES", "CROCKERY", "ELECTRONICS", "GROCERIES"];
 const GENDERS = ["MALE", "FEMALE", "OTHER"];
+const PAYMENT_STATUSES = ["FAILED", "SUCCESS", "PENDING", "REFUNDED"];
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState([]);
@@ -90,7 +92,6 @@ export default function AdminDashboard() {
   // ================= CLIENT LOGIC =================
   const saveCustomerEdit = async () => {
     try {
-      // ✅ FIXED: Targets PUT /api/admin/customers/{id}
       await api.put(`/api/admin/customers/${editingCustomer.id}`, editingCustomer);
       setEditingCustomer(null); loadAll();
       alert("Client Security Profile Updated");
@@ -99,7 +100,6 @@ export default function AdminDashboard() {
 
   const deleteCustomer = async (id) => { 
     if (window.confirm("Wipe customer record?")) { 
-      // ✅ FIXED: Hits Admin-authorized DELETE path
       await api.delete(`/api/admin/customers/${id}`); 
       loadAll(); 
     } 
@@ -107,7 +107,6 @@ export default function AdminDashboard() {
   
   const viewCustomerOrders = async (id) => {
     try {
-        // ✅ FIXED: Synchronized trace path
         const res = await api.get(`/api/admin/orders/customer/${id}`);
         alert(`Order History for Client ${id}:\n` + JSON.stringify(res.data, null, 2));
     } catch (err) { alert("Trace failed"); }
@@ -116,16 +115,37 @@ export default function AdminDashboard() {
   // ================= ORDER LOGIC =================
   const updateStatus = async (orderId, status) => {
     try {
-      // ✅ Synchronized parameter mapping
       await api.put(`/api/admin/orders/${orderId}/status`, null, { 
         params: { status: status.trim().toUpperCase() } 
       });
       loadAll();
+      alert("Status Updated Successfully");
     } catch (e) { alert("Status Transition Denied"); }
   };
 
+  const deleteOrder = async (id) => {
+    if (window.confirm("Permanently delete this order record?")) {
+      try {
+        await api.delete(`/api/admin/orders/${id}`);
+        loadAll();
+      } catch (err) { alert("Order removal failed."); }
+    }
+  };
+
+  // ================= PAYMENT LOGIC =================
+  const updatePaymentStatus = async (paymentId, status) => {
+    try {
+        await api.put(`/api/admin/payments/${paymentId}/status`, null, {
+            params: { status: status.toUpperCase() }
+        });
+        loadAll();
+    } catch (err) { alert("Payment status update failed"); }
+  };
+
   // ✅ Math Safety: Prevent NaN
-  const totalRevenue = payments.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const totalRevenue = payments
+    .filter(p => p.status === "SUCCESS")
+    .reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const inventoryValue = products.reduce((acc, curr) => acc + (Number(curr.price) * Number(curr.unitsAvailable) || 0), 0);
 
   if (loading) return <div className="h-screen flex items-center justify-center font-black text-indigo-600 animate-pulse text-4xl">SYNCING_ADMIN_NODES...</div>;
@@ -139,7 +159,7 @@ export default function AdminDashboard() {
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{REVENUE_ICON} Revenue</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{totalRevenue.toLocaleString()}</h4><p className="text-xs text-green-500 font-bold">Total Settled</p></div>
+          <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{REVENUE_ICON} Revenue</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{totalRevenue.toLocaleString()}</h4><p className="text-xs text-green-500 font-bold">Verified Success</p></div>
           <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{USERS_ICON} Directory</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">{customers.length}</h4><p className="text-xs text-slate-400 font-bold">Active Clients</p></div>
           <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{VENDOR_ICON} Partners</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">{sellers.length}</h4><p className="text-xs text-indigo-500 font-bold">Verified Entities</p></div>
           <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Inventory</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{inventoryValue.toLocaleString()}</h4><p className="text-xs text-orange-500 font-bold">Asset Value</p></div>
@@ -200,17 +220,6 @@ export default function AdminDashboard() {
       {/* CUSTOMERS TABLE */}
       <section className="space-y-8">
         <h2 className="text-3xl font-black text-slate-800 px-6 border-l-[12px] border-orange-600 uppercase tracking-tighter">Client Hub</h2>
-        {editingCustomer && (
-          <div className="bg-white p-12 rounded-[4rem] border-4 border-orange-500 mb-12">
-            <h3 className="text-2xl font-black text-orange-600 mb-8 uppercase tracking-widest">Override CUS_{editingCustomer.id}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              <input className="border-2 p-6 rounded-3xl font-bold" value={editingCustomer.user.name} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, name: e.target.value}})} placeholder="Client"/>
-              <input className="border-2 p-6 rounded-3xl font-bold" value={editingCustomer.user.number} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, number: e.target.value}})} placeholder="Number"/>
-              <select className="border-2 p-6 rounded-3xl font-bold" value={editingCustomer.user.gender} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, gender: e.target.value}})}>{GENDERS.map(g => <option key={g} value={g}>{g}</option>)}</select>
-            </div>
-            <button onClick={saveCustomerEdit} className="w-full mt-10 bg-orange-600 text-white py-6 rounded-[2.5rem] font-black uppercase">Commit Profile Sync</button>
-          </div>
-        )}
         <div className="bg-white rounded-[4rem] shadow-sm overflow-hidden">
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b"><tr className="text-slate-400 text-[11px] font-black uppercase tracking-widest"><th className="py-10 px-12">Hash</th><th className="py-10 px-12 text-center">Fulfillment</th></tr></thead>
@@ -224,21 +233,69 @@ export default function AdminDashboard() {
       </section>
 
       {/* ORDERS TABLE */}
-      <section className="space-y-8 pb-32">
+      <section className="space-y-8">
         <h2 className="text-3xl font-black text-slate-800 px-6 border-l-[12px] border-purple-600 uppercase tracking-tighter">Settlement Hub</h2>
         <div className="bg-white rounded-[4rem] overflow-hidden shadow-sm">
           <table className="w-full text-left">
-            <thead className="bg-purple-50"><tr className="text-purple-400 text-[11px] font-black uppercase tracking-widest"><th className="py-10 px-12">Trace ID</th><th className="py-10 px-12">Protocol</th></tr></thead>
+            <thead className="bg-purple-50">
+              <tr className="text-purple-400 text-[11px] font-black uppercase tracking-widest"><th className="py-10 px-12">Trace ID</th><th className="py-10 px-12">Client</th><th className="py-10 px-12">Amount</th><th className="py-10 px-12">Protocol</th><th className="py-10 px-12 text-center">Actions</th></tr>
+            </thead>
             <tbody>
               {orders.map(o => (
-                <tr key={o.orderId} className="border-b hover:bg-purple-50/20"><td className="py-10 px-12 font-mono text-purple-600 font-bold uppercase">TRX_HASH_{o.orderId}</td><td className="py-10 px-12"><select className={`border-4 rounded-[1.5rem] px-8 py-4 text-xs font-black outline-none ${o.status === "DELIVERED" ? "bg-green-500 text-white border-green-400" : "bg-white"}`} value={o.status} onChange={(e) => updateStatus(o.orderId, e.target.value)}>{STATUSES.map(s => <option key={s} value={s}>{s}</option>)}</select></td></tr>
+                <tr key={o.orderId} className="border-b hover:bg-purple-50/20">
+                  <td className="py-10 px-12 font-mono text-purple-600 font-bold uppercase text-xs">TRX_{o.orderId}</td>
+                  <td className="py-10 px-12 font-black text-slate-700 uppercase">CUS_REF_{o.customerId}</td>
+                  <td className="py-10 px-12 font-black text-slate-900">₹{o.totalAmount}</td>
+                  <td className="py-10 px-12">
+                    <select className={`border-4 rounded-[1.5rem] px-8 py-4 text-xs font-black outline-none transition-all ${o.status === "DELIVERED" ? "bg-green-500 text-white border-green-400" : "bg-white"}`} value={o.status} onChange={(e) => updateStatus(o.orderId, e.target.value)}>{STATUSES.map(s => <option key={s} value={s}>{s}</option>)}</select>
+                  </td>
+                  <td className="py-10 px-12 flex justify-center gap-5"><button onClick={() => deleteOrder(o.orderId)} className="bg-red-50 text-red-600 px-6 py-4 rounded-2xl font-black">{TRASH_ICON}</button></td>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
       </section>
 
+      {/* NEW: FINANCIAL OVERSIGHT (PAYMENTS) */}
+      <section className="space-y-8 pb-32">
+        <h2 className="text-3xl font-black text-slate-800 px-6 border-l-[12px] border-emerald-600 uppercase tracking-tighter">Financial Oversight</h2>
+        <div className="bg-white rounded-[4rem] overflow-hidden shadow-sm border border-slate-50">
+          <table className="w-full text-left">
+            <thead className="bg-emerald-50">
+              <tr className="text-emerald-400 text-[11px] font-black uppercase tracking-widest">
+                <th className="py-10 px-12">Payment Hash</th>
+                <th className="py-10 px-12">Order Ref</th>
+                <th className="py-10 px-12">Gateway Status</th>
+                <th className="py-10 px-12">Method</th>
+                <th className="py-10 px-12">Liquidity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments.map(pay => (
+                <tr key={pay.id} className="border-b hover:bg-emerald-50/10">
+                  <td className="py-10 px-12 font-mono text-xs text-emerald-600 font-bold italic">{pay.paymentId || `PAY_INTERNAL_${pay.id}`}</td>
+                  <td className="py-10 px-12 font-black text-slate-700">ORD_{pay.orderId}</td>
+                  <td className="py-10 px-12">
+                    <select 
+                        className={`text-[10px] font-black px-5 py-2 rounded-full border-2 ${pay.status === 'SUCCESS' ? 'bg-emerald-500 text-white border-emerald-400' : 'bg-slate-50 text-slate-400 border-slate-200'}`}
+                        value={pay.status}
+                        onChange={(e) => updatePaymentStatus(pay.id, e.target.value)}
+                    >
+                        {PAYMENT_STATUSES.map(ps => <option key={ps} value={ps}>{ps}</option>)}
+                    </select>
+                  </td>
+                  <td className="py-10 px-12 font-bold text-slate-400 text-[10px] uppercase tracking-widest">{pay.paymentMethod || "UPI / CARD"}</td>
+                  <td className="py-10 px-12 font-black text-slate-900">₹{pay.amount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {payments.length === 0 && <div className="p-20 text-center font-black text-slate-200 text-4xl uppercase tracking-tighter">Zero Liquidity Events</div>}
+        </div>
+      </section>
+
       <footer className="text-center pb-12"><p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">Global Management Mainframe &copy; 2026</p></footer>
     </div>
   );
-} 
+}
