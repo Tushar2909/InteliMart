@@ -1,16 +1,13 @@
 package com.intellimart.controller;
 
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import com.intellimart.dto.*;
 import com.intellimart.entities.Status;
 import com.intellimart.service.*;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,6 +29,19 @@ public class AdminController {
         return ResponseEntity.ok(productService.getAllProducts(0, 500));
     }
 
+    // ✅ FIXED: Standardized admin product update path
+    @PutMapping("/products/{id}")
+    public ResponseEntity<ProductDto> updateProductByAdmin(
+            @PathVariable Long id,
+            @RequestBody ProductDto dto) {
+        return ResponseEntity.ok(productService.updateProductByAdmin(id, dto));
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<ApiResponse> deleteProductByAdmin(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse(true, productService.deleteProductByAdmin(id)));
+    }
+
     // ================= SELLERS =================
 
     @GetMapping("/sellers")
@@ -40,7 +50,7 @@ public class AdminController {
     }
 
     @PutMapping("/sellers/{id}")
-    public ResponseEntity<?> updateSeller(@PathVariable Long id,@RequestBody SellerDto dto) {
+    public ResponseEntity<?> updateSeller(@PathVariable Long id, @RequestBody SellerDto dto) {
         try {
             return ResponseEntity.ok(sellerService.updateSeller(id, dto));
         } catch (RuntimeException e) {
@@ -61,6 +71,17 @@ public class AdminController {
         return ResponseEntity.ok(customerService.getallcustomers());
     }
 
+    // ✅ ADDED: Missing Customer Update Endpoint for Admin
+    @PutMapping("/customers/{id}")
+    public ResponseEntity<?> updateCustomer(@PathVariable Long id, @RequestBody CustomerDto dto) {
+        try {
+            return ResponseEntity.ok(new ApiResponse(true, customerService.updatecustomer(id, dto)));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponse(false, e.getMessage()));
+        }
+    }
+
     // ================= ORDERS =================
 
     @GetMapping("/orders")
@@ -69,15 +90,10 @@ public class AdminController {
     }
 
     @PutMapping("/orders/{orderId}/status")
-    public ResponseEntity<?> updateStatus(
-            @PathVariable Long orderId,
-            @RequestParam String status) {
-
+    public ResponseEntity<?> updateStatus(@PathVariable Long orderId, @RequestParam String status) {
         try {
-            // ✅ FIX: normalize enum value (handles INTRANSIT / OUTFORDELIVERY)
             String normalized = status.trim().replace(" ", "").toUpperCase();
             Status st = Status.valueOf(normalized);
-
             return ResponseEntity.ok(orderService.updateOrderStatus(orderId, st));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -90,29 +106,5 @@ public class AdminController {
     @GetMapping("/payments")
     public ResponseEntity<List<PaymentDto>> payments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
-    }
-
-    // =========================================================
-    // ================= ADMIN PRODUCT UPDATE ==================
-    // =========================================================
-
-    @PutMapping("/products/{id}")
-    public ResponseEntity<ProductDto> updateProductByAdmin(
-            @PathVariable Long id,
-            @RequestBody ProductDto dto) {
-
-        return ResponseEntity.ok(productService.updateProductByAdmin(id, dto));
-    }
-
-    // =========================================================
-    // ================= ADMIN PRODUCT DELETE ==================
-    // =========================================================
-
-    @DeleteMapping("/products/{id}")
-    public ResponseEntity<ApiResponse> deleteProductByAdmin(@PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                new ApiResponse(true, productService.deleteProductByAdmin(id))
-        );
     }
 }

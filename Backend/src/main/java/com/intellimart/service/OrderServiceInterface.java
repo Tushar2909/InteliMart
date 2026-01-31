@@ -23,4 +23,5 @@ public interface OrderServiceInterface {
     List<SellerOrderDto> getSellerOrders(Long sellerId);
 
     List<SellerOrderDto> getSellerOrdersByAuth(Authentication auth);
+//    List<OrderDto> getCustomerOrdersById(Long customerId);
 }
