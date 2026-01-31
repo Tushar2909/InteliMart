@@ -89,11 +89,13 @@ export default function AdminDashboard() {
     } 
   };
 
-  // ================= CLIENT LOGIC =================
+  // ================= CLIENT LOGIC (Fixed for Nested UserDto) =================
   const saveCustomerEdit = async () => {
     try {
+      // ✅ Sending the CustomerDto which contains the nested UserDto
       await api.put(`/api/admin/customers/${editingCustomer.id}`, editingCustomer);
-      setEditingCustomer(null); loadAll();
+      setEditingCustomer(null); 
+      loadAll();
       alert("Client Security Profile Updated");
     } catch (err) { alert("Client Update Protocol Error"); }
   };
@@ -142,7 +144,6 @@ export default function AdminDashboard() {
     } catch (err) { alert("Payment status update failed"); }
   };
 
-  // ✅ Math Safety: Prevent NaN
   const totalRevenue = payments
     .filter(p => p.status === "SUCCESS")
     .reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
@@ -158,6 +159,7 @@ export default function AdminDashboard() {
         <button onClick={loadAll} className="bg-indigo-600 text-white px-16 py-6 rounded-[2.5rem] font-black shadow-2xl hover:bg-slate-900 transition-all">Reload Databases</button>
       </header>
 
+      {/* STAT CARDS SECTION */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{REVENUE_ICON} Revenue</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">₹{totalRevenue.toLocaleString()}</h4><p className="text-xs text-green-500 font-bold">Verified Success</p></div>
           <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 flex flex-col justify-between h-56"><p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{USERS_ICON} Directory</p><h4 className="text-4xl font-black text-slate-900 tracking-tighter">{customers.length}</h4><p className="text-xs text-slate-400 font-bold">Active Clients</p></div>
@@ -217,9 +219,36 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* CUSTOMERS TABLE */}
+      {/* ✅ CUSTOMERS TABLE WITH EDIT UI */}
       <section className="space-y-8">
         <h2 className="text-3xl font-black text-slate-800 px-6 border-l-[12px] border-orange-600 uppercase tracking-tighter">Client Hub</h2>
+        
+        {editingCustomer && (
+          <div className="bg-white p-12 rounded-[4rem] border-4 border-orange-500 mb-12 shadow-2xl">
+            <h3 className="text-2xl font-black text-orange-600 mb-8 uppercase tracking-widest">Override Client Profile: {editingCustomer.user.name}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-4 tracking-widest font-bold">Full Name</label>
+                <input className="border-2 p-6 rounded-3xl font-bold focus:border-orange-500 outline-none transition-all" value={editingCustomer.user.name} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, name: e.target.value}})} placeholder="Client Name"/>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-4 tracking-widest font-bold">Contact Number</label>
+                <input className="border-2 p-6 rounded-3xl font-bold focus:border-orange-500 outline-none transition-all" value={editingCustomer.user.number} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, number: e.target.value}})} placeholder="Mobile Number"/>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase ml-4 tracking-widest font-bold">Gender Specification</label>
+                <select className="border-2 p-6 rounded-3xl font-bold focus:border-orange-500 outline-none transition-all appearance-none bg-white px-8" value={editingCustomer.user.gender} onChange={e => setEditingCustomer({...editingCustomer, user: {...editingCustomer.user, gender: e.target.value}})}>
+                  {GENDERS.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-6 mt-12">
+                <button onClick={saveCustomerEdit} className="flex-1 bg-orange-600 text-white py-6 rounded-[2.5rem] font-black uppercase shadow-xl hover:bg-slate-900 transition-all">Commit Profile Sync</button>
+                <button onClick={() => setEditingCustomer(null)} className="bg-slate-100 px-16 py-6 rounded-[2.5rem] font-black uppercase text-xs hover:bg-slate-200 transition-all">Abort</button>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-[4rem] shadow-sm overflow-hidden">
           <table className="w-full text-left">
             <thead className="bg-slate-50 border-b"><tr className="text-slate-400 text-[11px] font-black uppercase tracking-widest"><th className="py-10 px-12">Hash</th><th className="py-10 px-12 text-center">Fulfillment</th></tr></thead>
@@ -257,7 +286,7 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      {/* NEW: FINANCIAL OVERSIGHT (PAYMENTS) */}
+      {/* FINANCIAL OVERSIGHT */}
       <section className="space-y-8 pb-32">
         <h2 className="text-3xl font-black text-slate-800 px-6 border-l-[12px] border-emerald-600 uppercase tracking-tighter">Financial Oversight</h2>
         <div className="bg-white rounded-[4rem] overflow-hidden shadow-sm border border-slate-50">
