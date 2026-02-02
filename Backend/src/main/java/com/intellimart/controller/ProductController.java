@@ -18,6 +18,12 @@ public class ProductController {
 
     private final ProductServiceInterface productService;
 
+    // ✅ FIX: Added missing endpoint for fetching a single product node by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
+    }
+
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
@@ -25,10 +31,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts(page, size));
     }
 
-    // SEARCH ENDPOINT
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDto>> search(@RequestParam String query) {
-        return ResponseEntity.ok(productService.searchProducts(query));
+    public ResponseEntity<List<ProductDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(defaultValue = "price_asc") String sortBy) {
+        return ResponseEntity.ok(productService.searchProducts(query, category, minPrice, maxPrice, sortBy));
     }
 
     @PreAuthorize("hasAuthority('ROLE_SELLER') or hasAuthority('ROLE_ADMIN')")
@@ -48,8 +58,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.updateProduct(auth, id, dto, image));
     }
 
-    // ✅ UPDATED: Supports image choosing in Admin Dashboard
-    // Matches the updated method signature in ProductServiceInterface
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping(value = "/admin/{id}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateProductAdminJson(

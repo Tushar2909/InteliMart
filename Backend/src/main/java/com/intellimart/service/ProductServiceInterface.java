@@ -7,22 +7,26 @@ import com.intellimart.dto.ProductDto;
 import com.intellimart.entities.ProductCategory;
 
 public interface ProductServiceInterface {
-    // Standard Retrieval Methods
+
+    // ================= STANDARD RETRIEVAL =================
     List<ProductDto> getAllProducts(int page, int size);
     List<ProductDto> getProductsByCategory(ProductCategory category);
     ProductDto getProductById(Long id);
+
+    // ================= SEARCH & FILTER =================
+    // ✅ Rich filtering used by the main search controller
+    List<ProductDto> searchProducts(String query, String category, Double minPrice, Double maxPrice, String sortBy);
     
-    // Search Implementation
+    // ✅ Simple search signature to resolve Implementation @Override errors
     List<ProductDto> searchProducts(String query);
 
-    // Seller Operation Methods
+    // ================= SELLER OPS =================
     ProductDto addProduct(Authentication auth, ProductDto dto, MultipartFile image);
     ProductDto updateProduct(Authentication auth, Long id, ProductDto dto, MultipartFile image);
     String deleteProduct(Authentication auth, Long id);
     List<ProductDto> getSellerProducts(Authentication auth);
 
-    // ================= ADMIN OPERATIONS =================
-    // Supports multipart/form-data for the Admin Dashboard Image choosing
+    // ================= ADMIN OPS =================
     ProductDto updateProductByAdmin(Long id, ProductDto dto, MultipartFile image);
     String deleteProductByAdmin(Long id);
 }

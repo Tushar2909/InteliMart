@@ -18,25 +18,17 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // 1. Send credentials to backend
       const res = await api.post("/api/auth/login", { email, password });
-
-      // 2. Save complete response (token, role, userId) to AuthContext
-      // This fix ensures user.id is available globally for your Cart/Address logic
       login(res.data);
-
       const role = res.data.role;
 
-      // 3. Redirect logic based on user role
       if (role === "ROLE_ADMIN") {
         navigate("/admin");
       } else if (role === "ROLE_SELLER") {
         navigate("/seller");
       } else {
-        // Customers are redirected to Home to see products
         navigate("/"); 
       }
-
     } catch (err) {
       console.error("Login Failed:", err);
       setError("Invalid email or password. Please try again.");
@@ -66,9 +58,7 @@ export default function Login() {
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">
-              Email Address
-            </label>
+            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">Email Address</label>
             <input
               type="email"
               className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
@@ -79,9 +69,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">
-              Password
-            </label>
+            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">Password</label>
             <input
               type="password"
               className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
@@ -92,19 +80,17 @@ export default function Login() {
           </div>
         </div>
 
-        <div
-          className="text-right text-sm text-indigo-600 mt-3 mb-6 cursor-pointer hover:underline font-medium"
-          onClick={() => alert("Password reset is coming soon!")}
-        >
-          Forgot password?
+        {/* ✅ FIXED BUTTON: Now correctly navigates to the recovery hub */}
+        <div className="text-right text-sm text-indigo-600 mt-3 mb-6 font-medium">
+          <Link to="/forgot-password" stroke="sm" className="hover:underline">
+            Forgot password?
+          </Link>
         </div>
 
         <button
           disabled={loading}
           className={`w-full py-4 rounded-xl font-bold text-white shadow-lg transition-all ${
-            loading 
-              ? "bg-gray-400 cursor-not-allowed" 
-              : "bg-black hover:bg-gray-800 active:scale-95"
+            loading ? "bg-gray-400 cursor-not-allowed" : "bg-black hover:bg-gray-800 active:scale-95"
           }`}
         >
           {loading ? "AUTHENTICATING..." : "SIGN IN"}

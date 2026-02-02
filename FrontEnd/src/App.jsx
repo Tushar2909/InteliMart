@@ -5,6 +5,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword"; // ✅ NEW IMPORT
 
 // SELLER COMPONENTS
 import SellerDashboard from "./pages/seller/SellerDashboard";
@@ -27,7 +28,8 @@ export default function App() {
   // Define which pages should not show the Navbar
   const hideNavbar =
     location.pathname === "/login" ||
-    location.pathname === "/signup";
+    location.pathname === "/signup" ||
+    location.pathname === "/forgot-password"; // ✅ HIDE NAVBAR ON RESET PAGE
 
   return (
     <>
@@ -65,6 +67,12 @@ export default function App() {
         <Route
           path="/signup"
           element={!token ? <Signup /> : <Navigate to="/" />}
+        />
+
+        {/* ✅ FORGOT PASSWORD ROUTE */}
+        <Route 
+          path="/forgot-password" 
+          element={<ForgotPassword />} 
         />
 
         {/* ================= CUSTOMER ROUTES ================= */}

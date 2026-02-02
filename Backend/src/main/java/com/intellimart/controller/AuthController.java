@@ -1,5 +1,6 @@
 package com.intellimart.controller;
 
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -62,32 +63,37 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<SigninResponse> login(@RequestBody LoginDto request) {
-        // 1. Authenticate credentials
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        // 2. Extract Principal
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        
-        // 3. Generate JWT Token
         String token = jwtUtils.generateToken(principal);
 
-        // 4. Map the principal's ID to the response to satisfy frontend requirements
-        // This ensures the userId is available in LocalStorage for Address/Checkout logic
         return ResponseEntity.ok(
                 new SigninResponse(
                     token, 
                     "Login Successful", 
                     principal.getRole(), 
-                    principal.getId() // Returns Long from UserPrincipal
+                    principal.getId()
                 )
         );
     }
 
     /**
-     * Password Reset
+     * ✅ NEW: Verify Email Node
+     * This fixes the "No mapping for POST /api/auth/verify-email" error.
      */
+    @PostMapping("/verify-email")
+    public ResponseEntity<ApiResponse> verifyEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        // Log to console so you can see it working
+        System.out.println("Verifying identity for email node: " + email);
+        
+        customerService.verifyEmailExists(email);
+        return ResponseEntity.ok(new ApiResponse(true, "Identity verified successfully"));
+    }
+    
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse> reset(@RequestBody ResetPasswordDto dto) {
         userService.resetPassword(dto.getEmail(), dto.getNewPassword());
