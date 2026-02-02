@@ -35,17 +35,42 @@ public class CartServiceImpl implements CartServiceInterface {
         return customerRepo.findByUser_Id(p.getId()).orElseThrow();
     }
 
-    // ================= OLD (userId based) =================
+    // ================= OLD (userId based – FIXED) =================
 
     @Override
     public String addItemToCart(Long userId, Long productId, int quantity) {
-        Authentication fake = null;
-        return addItemToCart(fake, productId, quantity);
+
+        if (quantity <= 0) throw new RuntimeException("Invalid quantity");
+
+        Customer customer = customerRepo.findByUser_Id(userId).orElseThrow();
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Optional<CartItem> existing =
+                cartRepo.findByCustomerAndProductAndIsDeletedFalse(customer, product);
+
+        if (existing.isPresent()) {
+            CartItem item = existing.get();
+            item.setQuantity(item.getQuantity() + quantity);
+            cartRepo.save(item);
+            return "Updated";
+        }
+
+        CartItem item = new CartItem();
+        item.setCustomer(customer);
+        item.setProduct(product);
+        item.setQuantity(quantity);
+        item.setDeleted(false);
+
+        cartRepo.save(item);
+        return "Added";
     }
 
     @Override
     public List<CartItemDto> getCartDtos(Long userId) {
         Customer c = customerRepo.findByUser_Id(userId).orElseThrow();
+
         return cartRepo.findByCustomer_IdAndIsDeletedFalse(c.getId())
                 .stream()
                 .map(i -> new CartItemDto(
@@ -67,8 +92,13 @@ public class CartServiceImpl implements CartServiceInterface {
     @Override
     public String clearCart(Long userId) {
         Customer c = customerRepo.findByUser_Id(userId).orElseThrow();
+
         cartRepo.findByCustomer_IdAndIsDeletedFalse(c.getId())
-                .forEach(i -> { i.setDeleted(true); cartRepo.save(i); });
+                .forEach(i -> {
+                    i.setDeleted(true);
+                    cartRepo.save(i);
+                });
+
         return "Cleared";
     }
 
@@ -88,7 +118,7 @@ public class CartServiceImpl implements CartServiceInterface {
         return "Removed";
     }
 
-    // ================= JWT BASED =================
+    // ================= JWT BASED (UNCHANGED) =================
 
     @Override
     public String addItemToCart(Authentication auth, Long productId, int quantity) {

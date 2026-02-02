@@ -31,35 +31,24 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     @Override
     public OrderDto placeOrder(Long customerId, Long addressId) {
-
         Customer customer = customerRepo.findByUser_Id(customerId).orElseThrow();
-
-        Address address =
-                addressRepo.findByAidAndCustomer_Id(addressId, customer.getId())
+        Address address = addressRepo.findByAidAndCustomer_Id(addressId, customer.getId())
                         .orElseThrow(() -> new RuntimeException("Invalid address"));
-
         return internalPlaceOrder(customer, address);
     }
 
     @Override
     public OrderDto placeOrder(Authentication auth, Long addressId) {
-
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
-
-        Customer customer =
-                customerRepo.findByUser_Id(principal.getId()).orElseThrow();
-
-        Address address =
-                addressRepo.findByAidAndCustomer_Id(addressId, customer.getId())
+        Customer customer = customerRepo.findByUser_Id(principal.getId()).orElseThrow();
+        Address address = addressRepo.findByAidAndCustomer_Id(addressId, customer.getId())
                         .orElseThrow(() -> new RuntimeException("Invalid address"));
-
         return internalPlaceOrder(customer, address);
     }
 
     private OrderDto internalPlaceOrder(Customer customer, Address address) {
-
-        List<CartItem> cartItems =
-                cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId());
+        // Fetch items where is_deleted is 0x00
+        List<CartItem> cartItems = cartRepo.findByCustomer_IdAndIsDeletedFalse(customer.getId());
 
         if (cartItems.isEmpty()) throw new RuntimeException("Cart empty");
 
@@ -72,7 +61,6 @@ public class OrderServiceImpl implements OrderServiceInterface {
         order.setLineItems(new HashSet<>());
 
         for (CartItem c : cartItems) {
-
             Product p = c.getProduct();
 
             OrderLineItem li = new OrderLineItem();
@@ -82,17 +70,36 @@ public class OrderServiceImpl implements OrderServiceInterface {
             li.setUnitPrice(p.getPrice().doubleValue());
 
             order.getLineItems().add(li);
-
             order.setTotalAmount(
                     order.getTotalAmount().add(
                             p.getPrice().multiply(BigDecimal.valueOf(c.getQuantity()))
                     )
             );
 
-            c.setDeleted(true);
+            // ✅ LOGIC UPDATE: We REMOVED c.setDeleted(true) from here.
+            // Items remain in cart (0x00) until Razorpay verification confirms payment.
         }
 
         return toDto(orderRepo.save(order));
+    }
+
+    /**
+     * ✅ NEW ENHANCEMENT: Call this from PaymentServiceImpl only after successful payment verification.
+     */
+    public void confirmOrderAndClearCart(Long orderId) {
+        Orders order = orderRepo.findById(orderId).orElseThrow();
+        order.setStatus(Status.CONFIRMED);
+        
+        // Find the active cart items for the customer who placed this order
+        List<CartItem> cartItems = cartRepo.findByCustomer_IdAndIsDeletedFalse(order.getCustomer().getId());
+        
+        // Mark them as deleted (0x01) now that payment is done
+        for (CartItem item : cartItems) {
+            item.setDeleted(true);
+        }
+        
+        cartRepo.saveAll(cartItems);
+        orderRepo.save(order);
     }
 
     @Override
@@ -128,20 +135,15 @@ public class OrderServiceImpl implements OrderServiceInterface {
 
     @Override
     public List<SellerOrderDto> getSellerOrders(Long sellerId) {
-
         return orderRepo.findOrdersBySeller(sellerId).stream()
                 .flatMap(o -> o.getLineItems().stream()
                         .filter(li -> li.getProduct().getSeller().getId().equals(sellerId))
                         .map(li -> {
-
                             SellerOrderDto dto = new SellerOrderDto();
                             dto.setOrderId(o.getOrderId());
                             dto.setProductName(li.getProduct().getName());
                             dto.setQuantity(li.getQuantity());
-                            dto.setAmount(
-                                    li.getProduct().getPrice()
-                                            .multiply(BigDecimal.valueOf(li.getQuantity()))
-                            );
+                            dto.setAmount(li.getProduct().getPrice().multiply(BigDecimal.valueOf(li.getQuantity())));
                             dto.setStatus(o.getStatus());
                             dto.setOrderDate(o.getOrderDate());
                             return dto;
@@ -156,14 +158,12 @@ public class OrderServiceImpl implements OrderServiceInterface {
     }
 
     private OrderDto toDto(Orders o) {
-
         OrderDto dto = new OrderDto();
         dto.setOrderId(o.getOrderId());
         dto.setCustomerId(o.getCustomer().getUser().getId());
         dto.setStatus(o.getStatus());
         dto.setOrderDate(o.getOrderDate());
         dto.setTotalAmount(o.getTotalAmount());
-
         return dto;
     }
 }

@@ -8,7 +8,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.intellimart.dto.ApiResponse;
 import com.intellimart.dto.CustomerDto;
+import com.intellimart.dto.OrderDto;
+import com.intellimart.dto.PaymentDto;
 import com.intellimart.service.CustomerServiceinterface;
+import com.intellimart.service.OrderServiceInterface;
+import com.intellimart.service.PaymentServiceInterface;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -17,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class CustomerController {
 
     private final CustomerServiceinterface customerService;
+    private final OrderServiceInterface orderService;     // ✅ Added for Order lookup
+    private final PaymentServiceInterface paymentService; // ✅ Added for Payment lookup
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody CustomerDto dto) {
@@ -35,6 +41,27 @@ public class CustomerController {
     public ResponseEntity<ApiResponse> update(Authentication auth, @RequestBody CustomerDto dto) {
         String msg = customerService.updateByEmail(auth.getName(), dto);
         return ResponseEntity.ok(new ApiResponse(true, msg));
+    }
+
+    // ✅ NEW: Get my orders using JWT name (email)
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @GetMapping("/me/orders")
+    public ResponseEntity<List<OrderDto>> getMyOrders(Authentication auth) {
+        return ResponseEntity.ok(orderService.getCustomerOrdersByEmail(auth.getName()));
+    }
+
+    // ✅ NEW: Get my payments using JWT name (email)
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER')")
+    @GetMapping("/me/payments")
+    public ResponseEntity<List<PaymentDto>> getMyPayments(Authentication auth) {
+        return ResponseEntity.ok(paymentService.getCustomerPaymentsByEmail(auth.getName()));
+    }
+
+    // ✅ NEW: Find by ID (Helpful for dashboard cross-references)
+    @PreAuthorize("hasAuthority('ROLE_CUSTOMER') or hasAuthority('ROLE_ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable Long id) {
+        return ResponseEntity.ok(customerService.findById(id));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

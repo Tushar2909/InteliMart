@@ -82,7 +82,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
         p.setUnitsAvailable(dto.getUnitsAvailable());
         p.setDescription(dto.getDescription());
 
-        // Update image only if a new file is provided
         if (image != null && !image.isEmpty()) {
             p.setImageUrl(uploadToCloudinary(image));
         }
@@ -121,7 +120,6 @@ public class ProductServiceImpl implements ProductServiceInterface {
         p.setUnitsAvailable(dto.getUnitsAvailable());
         p.setDescription(dto.getDescription());
 
-        // ✅ FIXED: Explicit multipart support for Admin Image Updates
         if (image != null && !image.isEmpty()) {
             p.setImageUrl(uploadToCloudinary(image));
         }
@@ -143,21 +141,21 @@ public class ProductServiceImpl implements ProductServiceInterface {
     private String uploadToCloudinary(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
         try {
-            // Uploads raw bytes to Cloudinary and returns the secure URL string
             Map<?, ?> res = cloudinary.uploader().upload(file.getBytes(), Map.of());
             return res.get("secure_url").toString();
         } catch (Exception e) { 
-            throw new RuntimeException("External Asset Upload Failure: " + e.getMessage()); 
+            throw new RuntimeException("Cloudinary Upload Failure: " + e.getMessage()); 
         }
     }
 
     private Seller getSellerFromAuth(Authentication auth) {
-        User user = userRepo.findByEmailAndIsDeletedFalse(auth.getName()).orElseThrow();
-        return sellerRepo.findByUser_Id(user.getId()).orElseThrow();
+        User user = userRepo.findByEmailAndIsDeletedFalse(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return sellerRepo.findByUser_Id(user.getId())
+                .orElseThrow(() -> new RuntimeException("Seller profile not linked to user"));
     }
 
     private void validateOwnership(Authentication auth, Product p) {
-        // Admin has global override permission
         if (auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) return;
 
@@ -170,12 +168,22 @@ public class ProductServiceImpl implements ProductServiceInterface {
         ProductDto dto = new ProductDto();
         dto.setId(p.getId());
         dto.setName(p.getName());
-        dto.setPcategory(p.getPcategory().name());
+        
+        // Added safety check for category
+        if (p.getPcategory() != null) {
+            dto.setPcategory(p.getPcategory().name());
+        }
+        
         dto.setPrice(p.getPrice());
         dto.setUnitsAvailable(p.getUnitsAvailable());
         dto.setImageUrl(p.getImageUrl());
         dto.setDescription(p.getDescription());
-        dto.setSellerId(p.getSeller() != null ? p.getSeller().getId() : null);
+        
+        // Standardized safety check for seller 
+        if (p.getSeller() != null) {
+            dto.setSellerId(p.getSeller().getId());
+        }
+        
         return dto;
     }
 }

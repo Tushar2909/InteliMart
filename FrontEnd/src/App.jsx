@@ -5,20 +5,26 @@ import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+
+// SELLER COMPONENTS
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import SellerOrders from "./pages/seller/SellerOrders";
+
+// ADMIN COMPONENTS
 import AdminDashboard from "./pages/admin/AdminDashboard";
+
+// CUSTOMER COMPONENTS
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
+
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { useAuth } from "./auth/AuthContext";
 
 export default function App() {
-
   const location = useLocation();
   const { token, user } = useAuth();
-
   const role = user?.role;
 
+  // Define which pages should not show the Navbar
   const hideNavbar =
     location.pathname === "/login" ||
     location.pathname === "/signup";
@@ -28,8 +34,7 @@ export default function App() {
       {!hideNavbar && <Navbar />}
 
       <Routes>
-
-        {/* ROOT REDIRECT BASED ON ROLE */}
+        {/* ================= ROOT REDIRECT LOGIC ================= */}
         <Route
           path="/"
           element={
@@ -41,10 +46,9 @@ export default function App() {
           }
         />
 
-        {/* PRODUCT DETAILS (CUSTOMER ONLY LOGICALLY — UI guarded by navbar) */}
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/product/:id" element={<ProductDetails />} />
 
-        {/* AUTH */}
         <Route
           path="/login"
           element={
@@ -63,7 +67,7 @@ export default function App() {
           element={!token ? <Signup /> : <Navigate to="/" />}
         />
 
-        {/* CUSTOMER */}
+        {/* ================= CUSTOMER ROUTES ================= */}
         <Route
           path="/cart"
           element={
@@ -73,6 +77,7 @@ export default function App() {
           }
         />
 
+        {/* ✅ This single hub now manages Profile, Orders, and Payments via Tabs */}
         <Route
           path="/customer"
           element={
@@ -82,7 +87,7 @@ export default function App() {
           }
         />
 
-        {/* SELLER */}
+        {/* ================= SELLER ROUTES ================= */}
         <Route
           path="/seller"
           element={
@@ -101,7 +106,7 @@ export default function App() {
           }
         />
 
-        {/* SELLER PROFILE PLACEHOLDER */}
+        {/* Using Dashboard as placeholder for profile to keep logic simple */}
         <Route
           path="/seller/profile"
           element={
@@ -111,7 +116,7 @@ export default function App() {
           }
         />
 
-        {/* ADMIN */}
+        {/* ================= ADMIN ROUTES ================= */}
         <Route
           path="/admin"
           element={
@@ -121,7 +126,6 @@ export default function App() {
           }
         />
 
-        {/* ADMIN PROFILE PLACEHOLDER */}
         <Route
           path="/admin/profile"
           element={
@@ -131,9 +135,8 @@ export default function App() {
           }
         />
 
-        {/* FALLBACK */}
+        {/* ================= FALLBACK ================= */}
         <Route path="*" element={<Navigate to="/" />} />
-
       </Routes>
     </>
   );
