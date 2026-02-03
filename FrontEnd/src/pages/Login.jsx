@@ -6,6 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // ✅ Restored Toggle
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +16,13 @@ export default function Login() {
   const submit = async (e) => {
     e.preventDefault();
     setError("");
+    
+    // ✅ Sync with Backend: Minimum 4 characters
+    if (password.length < 4) {
+        setError("Password must be at least 4 characters.");
+        return;
+    }
+
     setLoading(true);
 
     try {
@@ -68,19 +76,27 @@ export default function Login() {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="block text-xs font-semibold text-gray-600 uppercase mb-1 ml-1">Password</label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               className="w-full border border-gray-200 px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
               placeholder="••••••••"
               required
+              minLength={4}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {/* ✅ Eye Toggle Icon */}
+            <button 
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-9 text-gray-400 hover:text-indigo-600 transition-colors"
+            >
+              {showPassword ? "🙈" : "👁️"}
+            </button>
           </div>
         </div>
 
-        {/* ✅ FIXED BUTTON: Now correctly navigates to the recovery hub */}
         <div className="text-right text-sm text-indigo-600 mt-3 mb-6 font-medium">
           <Link to="/forgot-password" stroke="sm" className="hover:underline">
             Forgot password?

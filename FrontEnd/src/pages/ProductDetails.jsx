@@ -8,22 +8,27 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [p, setP] = useState(null);
-  const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [similarProducts, setSimilarProducts] = useState([]); // Added state for similar products
 
   const loadProductNode = useCallback(async () => {
+    // ✅ SAFETY GUARD: Prevent calling backend with "undefined" string
+    // This fixes the MethodArgumentTypeMismatchException in your logs
+    if (!id || id === "undefined") return;
+
     try {
       setLoading(true);
-      // Fetch specific product by ID
       const res = await api.get(`/api/products/${id}`);
       setP(res.data);
-      
+
+      // ✅ ADDED: Fetch similar products based on the current category
       if (res.data?.pcategory) {
-        try {
-          // ✅ Corrected: Using the dynamic search endpoint for related items
-          const rel = await api.get(`/api/products/search?category=${res.data.pcategory}`);
-          setRelated(rel.data.filter(x => x.id !== Number(id)).slice(0, 4));
-        } catch (e) { setRelated([]); }
+        const similarRes = await api.get(`/api/products/search?category=${res.data.pcategory}`);
+        // Filter out current product and limit to 4 items
+        const filtered = similarRes.data
+          .filter(item => item.id !== parseInt(id))
+          .slice(0, 4);
+        setSimilarProducts(filtered);
       }
     } catch (err) { 
       console.error("Node Sync Failed", err); 
@@ -32,71 +37,101 @@ export default function ProductDetails() {
   }, [id]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    loadProductNode();
+    // ✅ Check if ID exists before attempting to load
+    if (id && id !== "undefined") {
+      window.scrollTo(0, 0);
+      loadProductNode();
+    }
   }, [id, loadProductNode]);
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-black text-indigo-600 animate-pulse text-2xl uppercase italic tracking-[0.5em]">Syncing_Metadata...</div>;
+  if (loading) return (
+    <div className="h-screen flex items-center justify-center font-black text-indigo-600 italic animate-pulse">
+      SYNCING_TECHNICAL_METADATA...
+    </div>
+  );
   
-  if (!p) return <div className="h-screen flex flex-col items-center justify-center gap-6 font-black uppercase text-slate-400 italic">Product_Node_Not_Found <button onClick={() => navigate('/')} className="px-8 py-3 border-2 border-black text-[10px]">Return_to_Inventory</button></div>;
+  if (!p) return <div className="h-screen flex flex-col items-center justify-center font-black uppercase text-slate-400 italic">Node_Not_Found</div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 lg:p-12 space-y-24 animate-in fade-in duration-1000">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-        {/* --- IMAGE --- */}
-        <div className="sticky top-28 bg-white p-4 rounded-[4rem] shadow-2xl border border-slate-50 overflow-hidden group">
-          <img src={p.imageUrl} alt={p.name} className="w-full h-[650px] object-cover rounded-[3.5rem] grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s]" />
+    <div className="bg-white min-h-screen px-8 lg:px-24 py-20 animate-in fade-in duration-1000">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        
+        {/* REFINED STUDIO IMAGE (Original Colors) */}
+        <div className="rounded-[4rem] overflow-hidden bg-white shadow-2xl border border-slate-50 group">
+          <img 
+            src={p.imageUrl} 
+            alt={p.name} 
+            className="w-full h-[650px] object-cover transition-all duration-[1.5s] group-hover:scale-105" 
+          />
         </div>
 
-        {/* --- PRODUCT INFO --- */}
-        <div className="space-y-12 py-8">
+        {/* INFO HUB */}
+        <div className="space-y-12">
           <div className="space-y-6">
             <div className="flex items-center gap-4">
-              <span className="bg-slate-900 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest italic">{p.pcategory}</span>
-              <span className="text-[10px] font-black text-slate-200 uppercase tracking-widest">Node: #{p.id}</span>
+              <span className="bg-indigo-600 text-white px-6 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.3em] italic">{p.pcategory}</span>
             </div>
-            <h1 className="text-8xl font-black text-slate-900 tracking-tighter italic uppercase leading-none">{p.name}</h1>
-            <p className="text-6xl font-black text-indigo-600 italic tracking-tighter">₹{p.price?.toLocaleString()}</p>
+            <h1 className="text-7xl font-black text-slate-900 tracking-tighter italic uppercase leading-tight">
+              {p.name}
+            </h1>
+            <p className="text-5xl font-black text-indigo-600 italic tracking-tighter">
+              ₹{p.price?.toLocaleString()}
+            </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-10 border-y border-slate-100 py-12">
-            <div className="space-y-3 border-l-4 border-indigo-600 pl-6">
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Merchant_Source</p>
-              <p className="font-black text-slate-900 text-2xl italic uppercase tracking-tighter">{p.sellerName || "Verified_Seller"}</p>
+          <div className="grid grid-cols-2 gap-8 border-y border-slate-100 py-12">
+            <div className="space-y-2 border-l-4 border-indigo-600 pl-6">
+              <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Merchant</p>
+              <p className="font-black text-slate-900 text-xl italic uppercase tracking-tighter">{p.sellerName || "Verified_Node"}</p>
             </div>
-            <div className="space-y-3 border-l-4 border-slate-100 pl-6">
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Availability</p>
-              <p className={`font-black text-2xl uppercase italic tracking-tighter ${p.unitsAvailable > 0 ? "text-slate-900" : "text-rose-500"}`}>{p.unitsAvailable > 0 ? `${p.unitsAvailable}_Units` : "Node_Depleted"}</p>
+            <div className="space-y-2 border-l-4 border-slate-100 pl-6">
+              <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Availability</p>
+              <p className={`font-black text-xl uppercase italic tracking-tighter ${p.unitsAvailable > 0 ? "text-slate-900" : "text-rose-500"}`}>
+                {p.unitsAvailable > 0 ? `${p.unitsAvailable}_Units` : "Out of Stock"}
+              </p>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">Technical_Metadata</p>
-            <p className="text-slate-500 leading-relaxed font-medium text-xl italic">{p.description || "No metadata provided."}</p>
+          <div className="space-y-4">
+            <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Description</p>
+            <p className="text-slate-500 leading-relaxed font-medium text-lg italic whitespace-pre-line">
+              {p.description || "No data provided."}
+            </p>
           </div>
 
-          {/* ✅ Functional Add to Cart */}
           <button 
             onClick={() => addToCart(p.id, 1)} 
             disabled={p.unitsAvailable <= 0} 
-            className={`w-full py-8 rounded-[2.5rem] font-black uppercase text-xs tracking-[0.4em] shadow-2xl transition-all active:scale-95 ${p.unitsAvailable > 0 ? "bg-slate-900 text-white hover:bg-indigo-600 shadow-indigo-100" : "bg-slate-100 text-slate-300 cursor-not-allowed shadow-none"}`}>
-            {p.unitsAvailable > 0 ? "Deploy to Cart" : "Node_Offline"}
+            className="w-full py-8 rounded-[2rem] bg-indigo-600 text-white font-black uppercase text-[10px] tracking-[0.4em] hover:bg-slate-900 shadow-2xl shadow-indigo-100 transition-all active:scale-95"
+          >
+            {p.unitsAvailable > 0 ? "Add to Cart" : "Currently Unavailable"}
           </button>
         </div>
       </div>
 
-      {/* --- RELATED NODES --- */}
-      {related.length > 0 && (
-        <div className="space-y-16 pt-20 border-t border-slate-100">
-          <h2 className="text-4xl font-black uppercase italic tracking-tighter">Similar Marketplace Nodes</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-            {related.map(item => (
-              <div key={item.id} onClick={() => navigate(`/product/${item.id}`)} className="cursor-pointer group bg-white p-6 rounded-[3.5rem] border border-slate-50 hover:shadow-2xl hover:-translate-y-4 transition-all duration-700">
-                <div className="aspect-square overflow-hidden rounded-[2.5rem] mb-6 bg-slate-50">
-                  <img src={item.imageUrl} className="h-full w-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000" alt={item.name} />
+      {/* ✅ ADDED: SIMILAR PRODUCTS SECTION */}
+      {similarProducts.length > 0 && (
+        <div className="mt-40 space-y-16">
+          <div className="flex items-center gap-6">
+            <div className="h-10 w-2 bg-indigo-600"></div>
+            <h2 className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter">Similar Products</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+            {similarProducts.map((item, idx) => (
+              <div 
+                key={item.id} 
+                style={{ animationDelay: `${idx * 150}ms` }}
+                className="group cursor-pointer animate-in fade-in slide-in-from-bottom-10 duration-700"
+                onClick={() => navigate(`/product/${item.id}`)}
+              >
+                <div className="overflow-hidden rounded-[3rem] aspect-square bg-slate-50 shadow-lg group-hover:shadow-2xl transition-all duration-500 border border-slate-100">
+                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700" />
                 </div>
-                <h3 className="font-black uppercase italic text-lg text-slate-900 tracking-tighter">{item.name}</h3>
-                <p className="font-black text-indigo-600 tracking-tighter italic text-xl mt-2">₹{item.price?.toLocaleString()}</p>
+                <div className="mt-8 space-y-2 text-center">
+                  <h3 className="font-black text-xl uppercase italic tracking-tighter text-slate-900 group-hover:text-indigo-600 transition-colors">{item.name}</h3>
+                  <p className="font-black text-indigo-600 italic">₹{item.price?.toLocaleString()}</p>
+                </div>
               </div>
             ))}
           </div>

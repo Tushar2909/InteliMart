@@ -1,31 +1,20 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 
-const CATEGORIES = [
-  "CLOTHING",
-  "ACCESSORIES",
-  "SHOES",
-  "CROCKERY",
-  "ELECTRONICS",
-  "GROCERIES"
-];
+const CATEGORIES = ["CLOTHING", "ACCESSORIES", "SHOES", "CROCKERY", "ELECTRONICS", "GROCERIES"];
 
 export default function SellerDashboard() {
-
   const [products, setProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]); 
   const [loading, setLoading] = useState(true);
-
   const [imageFile, setImageFile] = useState(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    price: "",
-    pcategory: "CLOTHING",
-    unitsAvailable: 1,
-    description: ""
+  const [form, setForm] = useState({ 
+    name: "", 
+    price: "", 
+    pcategory: "CLOTHING", 
+    unitsAvailable: 1, 
+    description: "" // ✅ Added Description to state
   });
-
   const [editingId, setEditingId] = useState(null);
 
   useEffect(() => {
@@ -33,188 +22,154 @@ export default function SellerDashboard() {
     loadOrders();
   }, []);
 
-  // ================= LOAD =================
-
   const loadProducts = async () => {
     try {
       const res = await api.get("/api/seller/products");
       setProducts(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load products");
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { alert("Failed to load products"); }
+    finally { setLoading(false); }
   };
 
   const loadOrders = async () => {
     try {
-      const res = await api.get("/api/seller/orders");
+      // ✅ Matches backend @GetMapping("/seller") in OrderController
+      const res = await api.get("/api/orders/seller");
       setOrders(res.data);
-    } catch (err) {
-      console.error(err);
+    } catch (err) { 
+      console.error("Order Sync Failed", err); 
     }
   };
 
-  // ================= FORM =================
-
-  const handleChange = e =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
   const submit = async e => {
     e.preventDefault();
-
-    if (!editingId && !imageFile) {
-      alert("Please select image");
-      return;
-    }
+    if (!editingId && !imageFile) { alert("Please select image"); return; }
 
     const fd = new FormData();
-
     if (imageFile) fd.append("image", imageFile);
-
-    fd.append(
-      "data",
-      new Blob([JSON.stringify({
-        name: form.name,
-        price: Number(form.price),
-        pcategory: form.pcategory,
-        unitsAvailable: Number(form.unitsAvailable),
-        description: form.description
-      })], { type: "application/json" })
-    );
+    
+    // ✅ Blob now includes description field
+    fd.append("data", new Blob([JSON.stringify({ 
+      ...form, 
+      price: Number(form.price), 
+      unitsAvailable: Number(form.unitsAvailable) 
+    })], { type: "application/json" }));
 
     try {
-      if (editingId)
-        await api.put(`/api/seller/products/${editingId}`, fd);
-      else
-        await api.post("/api/seller/products", fd);
-
-      alert("Saved");
-
-      setForm({
-        name: "",
-        price: "",
-        pcategory: "CLOTHING",
-        unitsAvailable: 1,
-        description: ""
-      });
-
-      setImageFile(null);
-      setEditingId(null);
+      if (editingId) await api.put(`/api/seller/products/${editingId}`, fd);
+      else await api.post("/api/seller/products", fd);
+      
+      alert("Product Updated");
+      setForm({ name: "", price: "", pcategory: "CLOTHING", unitsAvailable: 1, description: "" });
+      setImageFile(null); setEditingId(null);
       loadProducts();
-
-    } catch (err) {
-      console.error(err.response?.data || err);
-      alert("Save failed");
-    }
+    } catch (err) { alert("Save failed"); }
   };
 
   const edit = p => {
     setEditingId(p.id);
-    setForm({
-      name: p.name,
-      price: p.price,
-      pcategory: p.pcategory,
-      unitsAvailable: p.unitsAvailable || 1,
-      description: p.description || ""
+    setForm({ 
+      name: p.name, 
+      price: p.price, 
+      pcategory: p.pcategory, 
+      unitsAvailable: p.unitsAvailable || 1, 
+      description: p.description || "" 
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const remove = async id => {
-    if (!window.confirm("Delete this product?")) return;
+    if (!window.confirm("Terminate this inventory node?")) return;
     await api.delete(`/api/seller/products/${id}`);
     loadProducts();
   };
 
-  if (loading) return <p className="p-10">Loading...</p>;
+  if (loading) return <div className="h-screen flex items-center justify-center font-black animate-pulse text-indigo-600 italic">SYNCING_SELLER_HUB...</div>;
 
   return (
-    <div className="bg-gray-50 min-h-screen p-10">
+    <div className="bg-white min-h-screen px-12 py-16 animate-in fade-in duration-1000">
+      
+      {/* HEADER */}
+      <div className="border-l-8 border-indigo-600 pl-8 mb-16">
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] italic">Merchant_Console // 2026</span>
+        <h2 className="text-7xl font-black text-slate-900 tracking-tighter italic uppercase leading-none">Seller Dashboard</h2>
+      </div>
 
-      <h1 className="text-3xl font-semibold mb-8">Seller Dashboard</h1>
-
-      {/* ADD PRODUCT */}
-      <form onSubmit={submit}
-        className="bg-white p-6 rounded-xl shadow mb-10 grid grid-cols-2 gap-4 max-w-3xl">
-
-        <input name="name" placeholder="Product name"
-          value={form.name} onChange={handleChange}
-          className="border p-2 rounded" required />
-
-        <input name="price" placeholder="Price" type="number"
-          value={form.price} onChange={handleChange}
-          className="border p-2 rounded" required />
-
-        {/* FILE UPLOAD */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => setImageFile(e.target.files[0])}
-          className="border p-2 rounded col-span-2"
-        />
-
-        {imageFile && (
-          <img
-            src={URL.createObjectURL(imageFile)}
-            className="col-span-2 h-48 object-contain border rounded"
-          />
-        )}
-
-        <div className="col-span-2">
-          <p className="font-medium mb-2">Category</p>
-          <div className="flex gap-4 flex-wrap">
-            {CATEGORIES.map(c => (
-              <label key={c} className="flex items-center gap-1">
-                <input type="radio" name="pcategory" value={c}
-                  checked={form.pcategory === c}
-                  onChange={handleChange} />
-                {c}
-              </label>
-            ))}
+      {/* FORM CARD - EXPANDED */}
+      <div className="max-w-6xl bg-white rounded-[4rem] p-16 shadow-2xl border border-slate-50 mb-24 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-50 rounded-full -mr-20 -mt-20 transition-transform group-hover:scale-125 duration-700"></div>
+        <h3 className="text-xs font-black text-indigo-600 uppercase tracking-widest mb-12 italic relative">{editingId ? "Update" : "Register"}</h3>
+        
+        <form onSubmit={submit} className="grid grid-cols-1 md:grid-cols-2 gap-10 relative">
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em]">Product_Name</label>
+            <input name="name" value={form.name} onChange={handleChange} className="w-full bg-slate-50 p-6 rounded-3xl font-black text-2xl uppercase italic focus:ring-2 focus:ring-indigo-100 outline-none" required />
           </div>
-        </div>
 
-        <input name="unitsAvailable" type="number" min="1"
-          value={form.unitsAvailable} onChange={handleChange}
-          className="border p-2 rounded" />
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em]">Unit_Price (₹)</label>
+            <input name="price" type="number" value={form.price} onChange={handleChange} className="w-full bg-slate-50 p-6 rounded-3xl font-black text-2xl italic outline-none" required />
+          </div>
 
-        <input name="description" placeholder="Description"
-          value={form.description} onChange={handleChange}
-          className="border p-2 rounded" />
+          {/* ✅ NEW DESCRIPTION FIELD */}
+          <div className="col-span-full space-y-4">
+            <label className="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em]">Description</label>
+            <textarea 
+                name="description" 
+                value={form.description} 
+                onChange={handleChange} 
+                rows="3"
+                className="w-full bg-slate-50 p-8 rounded-[2.5rem] font-bold text-xl italic focus:ring-2 focus:ring-indigo-100 outline-none resize-none"
+                placeholder="Enter Description"
+                required
+            />
+          </div>
 
-        <button className="bg-black text-white py-2 rounded col-span-2 hover:bg-gray-800">
-          {editingId ? "Update Product" : "Add Product"}
-        </button>
-      </form>
+          <div className="col-span-full space-y-4">
+            <label className="text-[10px] font-black uppercase text-slate-300 tracking-[0.4em]">Image</label>
+            <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files[0])} className="w-full p-6 border-4 border-dashed border-slate-100 rounded-[2.5rem] bg-slate-50/50 cursor-pointer" />
+            {imageFile && <img src={URL.createObjectURL(imageFile)} className="h-40 w-40 object-cover rounded-3xl mt-4 shadow-xl" />}
+          </div>
 
-      {/* PRODUCTS */}
-      <h2 className="text-2xl font-medium mb-4">My Products</h2>
+          <div className="col-span-full bg-slate-50 p-10 rounded-[3rem]">
+            <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest mb-6">Category</p>
+            <div className="flex gap-4 flex-wrap">
+              {CATEGORIES.map(c => (
+                <button type="button" key={c} onClick={() => setForm({...form, pcategory: c})} className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${form.pcategory === c ? 'bg-indigo-600 text-white shadow-xl' : 'bg-white text-slate-400 hover:text-black'}`}>{c}</button>
+              ))}
+            </div>
+          </div>
 
-      <div className="bg-white rounded-xl shadow overflow-hidden mb-12">
-        <table className="w-full">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3">Image</th>
-              <th className="p-3">Name</th>
-              <th className="p-3">Price</th>
-              <th className="p-3">Category</th>
-              <th className="p-3">Actions</th>
+          <button className="col-span-full bg-slate-900 text-white py-8 rounded-[2.5rem] font-black uppercase text-xs tracking-[0.4em] shadow-2xl hover:bg-indigo-600 transition-all active:scale-95">
+            {editingId ? "Update Product" : "Add "}
+          </button>
+        </form>
+      </div>
+
+      {/* PRODUCTS TABLE */}
+      <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-10">Active_Inventory</h2>
+      <div className="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-50 mb-24 animate-in slide-in-from-bottom-10 duration-1000">
+        <table className="w-full text-left">
+          <thead className="bg-slate-900 text-white">
+            <tr className="text-[10px] font-black uppercase tracking-widest italic">
+              <th className="p-10">Image</th>
+              <th className="p-10">Products_Name</th>
+              <th className="p-10">Price</th>
+              <th className="p-10">Category</th>
+              <th className="p-10">Action</th>
             </tr>
           </thead>
-
           <tbody>
             {products.map(p => (
-              <tr key={p.id} className="border-t text-center">
-                <td className="p-3">
-                  <img src={p.imageUrl} className="h-12 mx-auto" />
-                </td>
-                <td>{p.name}</td>
-                <td>₹{p.price}</td>
-                <td>{p.pcategory}</td>
-                <td className="space-x-3">
-                  <button onClick={() => edit(p)} className="text-blue-600">Edit</button>
-                  <button onClick={() => remove(p.id)} className="text-red-500">Delete</button>
+              <tr key={p.id} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
+                <td className="p-10"><img src={p.imageUrl} className="h-24 w-24 object-cover rounded-3xl shadow-sm" /></td>
+                <td className="p-10 font-black text-2xl uppercase italic text-slate-900">{p.name}</td>
+                <td className="p-10 font-black text-2xl italic text-indigo-600">₹{p.price}</td>
+                <td className="p-10 font-black text-[10px] uppercase text-slate-400 tracking-widest">{p.pcategory}</td>
+                <td className="p-10 space-x-6">
+                  <button onClick={() => edit(p)} className="text-indigo-600 font-black text-[10px] uppercase border-b-2 border-indigo-100 hover:border-indigo-600">Modify</button>
+                  <button onClick={() => remove(p.id)} className="text-rose-400 font-black text-[10px] uppercase border-b-2 border-rose-100 hover:border-rose-600">Delete</button>
                 </td>
               </tr>
             ))}
@@ -222,35 +177,42 @@ export default function SellerDashboard() {
         </table>
       </div>
 
-      {/* ORDERS */}
-      <h2 className="text-2xl font-medium mb-4">Orders</h2>
-
-      <div className="bg-white rounded-xl shadow overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3">Product</th>
-              <th className="p-3">Qty</th>
-              <th className="p-3">Amount</th>
-              <th className="p-3">Status</th>
-              <th className="p-3">Date</th>
+      {/* ORDERS TABLE */}
+      <h2 className="text-4xl font-black italic uppercase tracking-tighter mb-10 mt-20">Orders</h2>
+      <div className="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-50 animate-in slide-in-from-bottom-10 duration-1000">
+        <table className="w-full text-left">
+          <thead className="bg-indigo-600 text-white">
+            <tr className="text-[10px] font-black uppercase tracking-widest italic">
+              <th className="p-10">Product</th>
+              <th className="p-10">Qty</th>
+              <th className="p-10">Amount</th>
+              <th className="p-10">Status</th>
+              <th className="p-10">Date</th>
             </tr>
           </thead>
-
           <tbody>
-            {orders.map(o => (
-              <tr key={o.orderId} className="border-t text-center">
-                <td>{o.productName}</td>
-                <td>{o.quantity}</td>
-                <td>₹{o.amount}</td>
-                <td>{o.status}</td>
-                <td>{o.orderDate}</td>
+            {orders.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="p-20 text-center text-slate-300 font-black uppercase italic tracking-widest italic">No_Orders_Received_Yet</td>
               </tr>
-            ))}
+            ) : (
+              orders.map(o => (
+                <tr key={`${o.orderId}-${o.productName}`} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
+                  <td className="p-10 font-black text-2xl uppercase italic text-slate-900">{o.productName}</td>
+                  <td className="p-10 font-black text-2xl text-slate-900">{o.quantity}</td>
+                  <td className="p-10 font-black text-2xl italic text-indigo-600">₹{o.amount}</td>
+                  <td className="p-10">
+                    <span className="px-6 py-2 bg-slate-50 rounded-full font-black text-[9px] uppercase tracking-widest text-slate-400">
+                      {o.status}
+                    </span>
+                  </td>
+                  <td className="p-10 font-bold text-slate-400 italic text-sm">{o.orderDate}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

@@ -1,6 +1,7 @@
 package com.intellimart.controller;
 
 import java.util.Map;
+import jakarta.validation.Valid; // ✅ Restored for validation support
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,7 +42,7 @@ public class AuthController {
      * Customer Registration
      */
     @PostMapping("/signup/customer")
-    public ResponseEntity<ApiResponse> signupCustomer(@RequestBody CustomerDto dto) {
+    public ResponseEntity<ApiResponse> signupCustomer(@Valid @RequestBody CustomerDto dto) { // ✅ @Valid added
         String msg = customerService.addcustomer(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
@@ -52,7 +53,7 @@ public class AuthController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/signup/seller")
-    public ResponseEntity<ApiResponse> signupSeller(@RequestBody SellerDto dto) {
+    public ResponseEntity<ApiResponse> signupSeller(@Valid @RequestBody SellerDto dto) { // ✅ @Valid added
         String msg = sellerService.addSeller(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse(true, msg));
@@ -81,19 +82,22 @@ public class AuthController {
     }
 
     /**
-     * ✅ NEW: Verify Email Node
-     * This fixes the "No mapping for POST /api/auth/verify-email" error.
+     * ✅ Verify Email Node
+     * Restored from your previous version
      */
     @PostMapping("/verify-email")
     public ResponseEntity<ApiResponse> verifyEmail(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        // Log to console so you can see it working
         System.out.println("Verifying identity for email node: " + email);
         
         customerService.verifyEmailExists(email);
         return ResponseEntity.ok(new ApiResponse(true, "Identity verified successfully"));
     }
     
+    /**
+     * ✅ Reset Password Node
+     * Restored from your previous version
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse> reset(@RequestBody ResetPasswordDto dto) {
         userService.resetPassword(dto.getEmail(), dto.getNewPassword());

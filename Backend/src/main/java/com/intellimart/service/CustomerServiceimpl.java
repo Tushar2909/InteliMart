@@ -42,8 +42,14 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
 
     @Override
     public String addcustomer(CustomerDto dto) {
+        // 1. Check for Duplicate Email
         if (userRepo.existsByEmail(dto.getUser().getEmail())) {
-            throw new RuntimeException("Email already registered");
+            throw new RuntimeException("Email already registered. Please use a different identity.");
+        }
+
+        // 2. ✅ NEW: Check for Duplicate Phone Number
+        if (userRepo.existsByNumber(dto.getUser().getNumber())) {
+            throw new RuntimeException("Phone number already exists in system records. Please change the number.");
         }
 
         UserDto uDto = dto.getUser();
@@ -102,6 +108,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
             if (ud.getName() != null) u.setName(ud.getName());
             if (ud.getNumber() != null) u.setNumber(ud.getNumber());
             if (ud.getGender() != null) u.setGender(ud.getGender());
+            if (ud.getEmail() != null) u.setEmail(ud.getEmail());
             userRepo.save(u);
         }
         return "Updated";
@@ -116,7 +123,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
         return toDto(c);
     }
 
-    // ================= UPDATE BY EMAIL =================
+    // ================= UPDATE BY EMAIL (FOR /ME ENDPOINT) =================
 
     @Override
     public String updateByEmail(String email, CustomerDto dto) {
@@ -124,10 +131,13 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         User u = c.getUser();
-        if (dto.getUser() != null) {
-            u.setName(dto.getUser().getName());
-            u.setNumber(dto.getUser().getNumber());
-            u.setGender(dto.getUser().getGender());
+        UserDto ud = dto.getUser();
+        
+        if (ud != null) {
+            if (ud.getName() != null) u.setName(ud.getName());
+            if (ud.getNumber() != null) u.setNumber(ud.getNumber());
+            if (ud.getGender() != null) u.setGender(ud.getGender());
+            if (ud.getEmail() != null) u.setEmail(ud.getEmail());
             userRepo.save(u);
         }
         return "Customer updated successfully";
@@ -137,10 +147,9 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
 
     @Override
     public void verifyEmailExists(String email) {
-        // ✅ This handles your "Find Identity" check for Forgot Password
-        if (!userRepo.existsByEmail(email)) {
-            throw new RuntimeException("Account identity not found");
-        }
+        // ✅ UPDATED: Only verify if the account is ACTIVE (not soft-deleted)
+        userRepo.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> new RuntimeException("Account identity not found or deactivated."));
     }
 
     // ================= DTO MAPPER =================
@@ -152,7 +161,7 @@ public class CustomerServiceimpl implements CustomerServiceinterface {
         User u = c.getUser();
         if (u != null) {
             UserDto ud = new UserDto();
-            ud.setId(u.getId()); 
+            ud.setId(u.getId());
             ud.setName(u.getName());
             ud.setEmail(u.getEmail());
             ud.setNumber(u.getNumber());

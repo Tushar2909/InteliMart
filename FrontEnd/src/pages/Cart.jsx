@@ -157,7 +157,7 @@ export default function Cart() {
           ))}
         </div>
         <div className="bg-slate-50 p-8 rounded-[2.5rem] border border-slate-100 space-y-4">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Register New Node</p>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Register New Address</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input className="border-2 p-3 rounded-xl text-xs font-bold bg-white" placeholder="Street Name" value={newAddress.street} onChange={e => setNewAddress({...newAddress, street: e.target.value})} />
             <input className="border-2 p-3 rounded-xl text-xs font-bold bg-white" placeholder="Detail Address" value={newAddress.detailAddress} onChange={e => setNewAddress({...newAddress, detailAddress: e.target.value})} />
