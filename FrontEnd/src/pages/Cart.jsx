@@ -71,7 +71,7 @@ export default function Cart() {
       const payment = payRes.data;
 
       const options = {
-        key: "rzp_test_SBDo89UP0tFzEp", // ✅ FIXED: Now matches application.properties
+        key: "rzp_test_SMNul6aqoMRAjK", //  Key Updated
         amount: Math.round(Number(payment.amount) * 100),
         currency: "INR",
         name: "IntelliMart",
