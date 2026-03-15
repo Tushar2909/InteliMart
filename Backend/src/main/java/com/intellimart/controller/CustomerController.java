@@ -21,9 +21,8 @@ import lombok.RequiredArgsConstructor;
 public class CustomerController {
 
     private final CustomerServiceinterface customerService;
-    private final OrderServiceInterface orderService;     // ✅ Added for Order lookup
-    private final PaymentServiceInterface paymentService; // ✅ Added for Payment lookup
-
+    private final OrderServiceInterface orderService;     
+    private final PaymentServiceInterface paymentService; 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody CustomerDto dto) {
         String msg = customerService.addcustomer(dto);

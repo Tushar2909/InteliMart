@@ -13,6 +13,5 @@ public interface CustomerRepo extends JpaRepository<Customer, Long> {
 
     Optional<Customer> findByUser_Email(String email);
 
-    // ✅ NEW: Find the customer record linked to a specific User ID
     Optional<Customer> findByUser_Id(Long userId);
 }
